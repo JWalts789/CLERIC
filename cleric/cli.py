@@ -2,8 +2,18 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
+
+# Fix Windows console encoding for Unicode/emoji output
+if sys.platform == "win32":
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError):
+        pass
 
 from rich.console import Console
 from rich.panel import Panel
@@ -17,7 +27,7 @@ from cleric.output.mermaid import MermaidGenerator
 from cleric.output.report import ReportGenerator
 
 
-console = Console()
+console = Console(force_terminal=True)
 
 STAGE_LABELS = {
     "bias_detection": ("🛡️", "Bias Detection", "Analyzing query for bias..."),

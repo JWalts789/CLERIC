@@ -4,7 +4,10 @@ Provides agents with the ability to search the web for information
 without requiring API keys or rate-limited services.
 """
 
-from duckduckgo_search import DDGS
+try:
+    from ddgs import DDGS
+except ImportError:
+    from duckduckgo_search import DDGS
 
 
 SEARCH_WEB_SCHEMA: dict = {
