@@ -80,25 +80,46 @@ class ReportGenerator:
         sources = stage.data.get("sources", [])
         tool_count = len(stage.tool_calls_made)
 
+        conflict_icons = {"high": "🔴", "moderate": "🟡", "low": "🟢", "none": "⚪"}
+
         source_entries = ""
+        conflict_counts: dict[str, int] = {}
         for i, source in enumerate(sources, 1):
             title = source.get("title", "Unknown")
             url = source.get("url", "")
             perspective = source.get("perspective", "neutral")
             claims = source.get("claims", [])
+            conflict = str(source.get("conflict_of_interest", "none")).lower()
+            conflict_detail = source.get("conflict_detail", "")
             claims_text = "\n".join(f"  - {c}" for c in claims[:5])
+
+            conflict_counts[conflict] = conflict_counts.get(conflict, 0) + 1
+            icon = conflict_icons.get(conflict, "⚪")
+
+            conflict_line = ""
+            if conflict in ("high", "moderate"):
+                conflict_line = f"\n- {icon} **Conflict of Interest ({conflict.upper()}):** {conflict_detail}"
+            elif conflict == "low":
+                conflict_line = f"\n- {icon} **Conflict of Interest (LOW):** {conflict_detail}" if conflict_detail else ""
+
             source_entries += f"""
 ### Source {i}: {title}
 - **URL:** {url}
-- **Perspective:** {perspective}
+- **Perspective:** {perspective}{conflict_line}
 - **Key Claims:**
 {claims_text}
 """
 
+        # Conflict summary
+        conflict_summary = ""
+        if any(v > 0 for k, v in conflict_counts.items() if k in ("high", "moderate")):
+            parts = [f"{conflict_icons.get(k, '?')} {k.title()}: {v}" for k, v in conflict_counts.items() if v > 0]
+            conflict_summary = f"\n**Conflict of Interest Summary:** {' | '.join(parts)}\n"
+
         return f"""## 2. Research Findings
 
 **Sources Found:** {len(sources)} | **Tool Calls:** {tool_count}
-
+{conflict_summary}
 {source_entries}"""
 
     def _factcheck_section(self, result: PipelineResult) -> str:

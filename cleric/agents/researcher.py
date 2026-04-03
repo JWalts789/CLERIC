@@ -51,6 +51,21 @@ or when the search snippet is insufficient.
    - Peer-reviewed > government data > established journalism > advocacy > blog
    - Note potential conflicts of interest.
 
+5. **Flag conflicts of interest — CRITICAL.**
+   - For EVERY source, assess whether the author or publisher has a \
+financial, political, or reputational stake in the topic.
+   - Examples of conflicts:
+     - A company studying the effects of its own product
+     - An advocacy group funded by the industry it covers
+     - A think tank with known political alignment on the topic
+     - A researcher funded by a party with a stake in the outcome
+   - Rate each source's conflict level: "none", "low", "moderate", "high"
+   - A "high" conflict does NOT mean the source is wrong — it means the \
+reader must know about the conflict to judge for themselves.
+   - Sources that go AGAINST their own interest (e.g., a company's \
+internal data showing its product causes harm) should note this — \
+it may actually increase credibility.
+
 ## Output format
 
 Present your findings as organized prose, then include a JSON block:
@@ -63,7 +78,9 @@ Present your findings as organized prose, then include a JSON block:
       "title": "<page title>",
       "claims": ["<specific factual claim 1>", "..."],
       "perspective": "<which viewpoint this source represents>",
-      "credibility_notes": "<brief assessment>"
+      "credibility_notes": "<brief assessment>",
+      "conflict_of_interest": "none | low | moderate | high",
+      "conflict_detail": "<who benefits, what's the stake — empty if none>"
     }
   ],
   "perspectives_found": ["<perspective 1>", "..."],

@@ -202,14 +202,46 @@ flowchart TD
         if not sources:
             return self._empty_diagram("No sources found in research data")
 
+        conflict_icons = {
+            "high": "🔴",
+            "moderate": "🟡",
+            "low": "🟢",
+            "none": "⚪",
+        }
+        conflict_colors = {
+            "high": "#e53e3e",
+            "moderate": "#d69e2e",
+            "low": "#38a169",
+            "none": "#718096",
+        }
+
         source_nodes = ""
+        source_styles = ""
         perspective_groups: dict[str, list[int]] = {}
+        conflict_counts: dict[str, int] = {"high": 0, "moderate": 0, "low": 0, "none": 0}
 
         for i, source in enumerate(sources[:12]):
             title = self._escape(str(source.get("title", f"Source {i}"))[:50])
             url = self._escape(str(source.get("url", ""))[:40])
             perspective = str(source.get("perspective", "neutral"))
-            source_nodes += f'    S{i}["{title}<br/><small>{url}</small>"]\n'
+            conflict = str(source.get("conflict_of_interest", "none")).lower()
+            conflict_detail = self._escape(str(source.get("conflict_detail", ""))[:60])
+            icon = conflict_icons.get(conflict, "⚪")
+
+            conflict_counts[conflict] = conflict_counts.get(conflict, 0) + 1
+
+            # Build node label with conflict indicator
+            label = f"{icon} {title}<br/><small>{url}</small>"
+            if conflict in ("high", "moderate") and conflict_detail:
+                label += f"<br/><small><i>COI: {conflict_detail}</i></small>"
+
+            source_nodes += f'    S{i}["{label}"]\n'
+
+            # Style high-conflict sources with a warning border
+            if conflict == "high":
+                source_styles += f"    style S{i} stroke:#e53e3e,stroke-width:3px,stroke-dasharray:5 5\n"
+            elif conflict == "moderate":
+                source_styles += f"    style S{i} stroke:#d69e2e,stroke-width:2px,stroke-dasharray:5 5\n"
 
             if perspective not in perspective_groups:
                 perspective_groups[perspective] = []
@@ -229,13 +261,21 @@ flowchart TD
     style PG{idx} fill:{color},color:#fff,stroke:{color}
 """
 
+        # Build conflict legend
+        conflict_summary = " | ".join(
+            f"{conflict_icons[k]} {k.title()}: {v}"
+            for k, v in conflict_counts.items() if v > 0
+        )
+
         return f"""---
-title: "Source Map — {len(sources)} Sources Gathered"
+title: "Source Map — {len(sources)} Sources | Conflicts: {conflict_summary}"
 ---
 flowchart LR
     Q["Research Query"]
+    LEGEND["Conflict of Interest Legend<br/>{conflict_summary}"]
 
 {source_nodes}
+{source_styles}
 {subgraphs}
     Q --> PG0
 """
