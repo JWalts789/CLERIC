@@ -48,7 +48,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -144,8 +144,7 @@ def _get_ws_loop(ws: WebSocket) -> Any:
 
 def _generate_mermaid_diagrams(result: PipelineResult) -> dict[str, str]:
     """Run MermaidGenerator and read back the generated files as strings."""
-    config = Config.from_env()
-    output_dir = config.output_dir / "mermaid"
+    output_dir = _PROJECT_ROOT / "output" / "mermaid"
     generator = MermaidGenerator(str(output_dir))
 
     try:
@@ -171,7 +170,7 @@ def _run_pipeline(job_id: str, query: str) -> None:
     jobs[job_id]["status"] = "running"
 
     try:
-        config = Config.from_env()
+        config = Config.from_env(dotenv_path=_PROJECT_ROOT / ".env")
         pipeline = ResearchPipeline(config)
 
         # Wire up callbacks ------------------------------------------------
@@ -187,15 +186,10 @@ def _run_pipeline(job_id: str, query: str) -> None:
             event = {
                 "type": "stage_complete",
                 "stage": stage,
-                "data": {
-                    "agent_name": agent_result.agent_name,
-                    "role": agent_result.role,
-                    "content": _truncate(agent_result.content),
-                    "structured_data": agent_result.data,
-                    "tool_call_count": len(agent_result.tool_calls_made),
-                    "tokens": agent_result.tokens_used,
-                },
+                "data": agent_result.data,
+                "content": _truncate(agent_result.content),
                 "tokens": agent_result.tokens_used,
+                "tool_calls": len(agent_result.tool_calls_made),
                 "timestamp": _now_iso(),
             }
             _push_event(job_id, event)
@@ -220,6 +214,7 @@ def _run_pipeline(job_id: str, query: str) -> None:
         complete_event = {
             "type": "pipeline_complete",
             "result": result_dict,
+            "mermaid_diagrams": mermaid_diagrams,
             "timestamp": _now_iso(),
         }
         _push_event(job_id, complete_event)

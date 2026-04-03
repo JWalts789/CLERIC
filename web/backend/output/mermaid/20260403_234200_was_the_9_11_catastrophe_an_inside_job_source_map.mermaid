@@ -1,0 +1,69 @@
+---
+title: "Source Map — 12 Sources | Conflicts: 🔴 High: 1 | 🟡 Moderate: 1 | 🟢 Low: 4 | ⚪ None: 6"
+---
+flowchart LR
+    Q["Research Query"]
+    LEGEND["Conflict of Interest Legend<br/>🔴 High: 1 | 🟡 Moderate: 1 | 🟢 Low: 4 | ⚪ None: 6"]
+
+    S0["🟢 National Commission on Terrorist Attacks Upon the <br/><small>https://www.9-11commission.gov/report/</small>"]
+    S1["⚪ Seven Resources Debunking 9/11 Conspiracy Theories<br/><small>https://www.cfr.org/articles/seven-resou</small>"]
+    S2["⚪ 9/11 Conspiracy Theory Debunking | World Trade Cen<br/><small>https://www.popularmechanics.com/militar</small>"]
+    S3["🟢 FAQs - NIST WTC Towers Investigation | NIST<br/><small>https://www.nist.gov/world-trade-center-</small>"]
+    S4["⚪ Analysis of Structural Response of WTC 7 to Fire a<br/><small>https://ascelibrary.org/doi/10.1061/(ASC</small>"]
+    S5["⚪ Why Did the World Trade Center Collapse? Science, <br/><small>https://www.tms.org/pubs/journals/jom/01</small>"]
+    S6["⚪ World Trade Center controlled demolition conspirac<br/><small>https://en.wikipedia.org/wiki/World_Trad</small>"]
+    S7["🟢 CNN.com - Source: FBI to bear brunt of 9/11 critic<br/><small>https://edition.cnn.com/2003/US/07/21/9.</small>"]
+    S8["🔴 9-11 Research: Official Investigations<br/><small>https://911research.wtc7.net/post911/pro</small><br/><small><i>COI: 9/11 truth advocacy organization with explicit agenda to cha</i></small>"]
+    S9["🟢 The Intelligence Community and 9/11: Congressional<br/><small>https://www.everycrsreport.com/reports/R</small>"]
+    S10["⚪ Factually - Independent Investigations on 9/11<br/><small>https://factually.co/fact-checks/politic</small>"]
+    S11["🟡 Researching 9/11 and Beyond: Current Knowledge and<br/><small>https://ic911.org/journal/articles/resea</small><br/><small><i>COI: Center focused on 9/11 questions may have advocacy orientati</i></small>"]
+
+    style S8 stroke:#e53e3e,stroke-width:3px,stroke-dasharray:5 5
+    style S11 stroke:#d69e2e,stroke-width:2px,stroke-dasharray:5 5
+
+
+    subgraph PG0["9/11 Commission Report and mai"]
+        S0
+        S10
+    end
+    style PG0 fill:#3182ce,color:#fff,stroke:#3182ce
+
+    subgraph PG1["Mainstream investigative journ"]
+        S1
+    end
+    style PG1 fill:#e53e3e,color:#fff,stroke:#e53e3e
+
+    subgraph PG2["Mainstream engineering and inv"]
+        S2
+    end
+    style PG2 fill:#38a169,color:#fff,stroke:#38a169
+
+    subgraph PG3["Structural engineering and mat"]
+        S3
+        S4
+        S5
+        S6
+    end
+    style PG3 fill:#d69e2e,color:#fff,stroke:#d69e2e
+
+    subgraph PG4["U.S. intelligence community an"]
+        S7
+    end
+    style PG4 fill:#805ad5,color:#fff,stroke:#805ad5
+
+    subgraph PG5["Conspiracy theory researchers "]
+        S8
+    end
+    style PG5 fill:#dd6b20,color:#fff,stroke:#dd6b20
+
+    subgraph PG6["U.S. intelligence community (d"]
+        S9
+    end
+    style PG6 fill:#3182ce,color:#fff,stroke:#3182ce
+
+    subgraph PG7["International and independent "]
+        S11
+    end
+    style PG7 fill:#e53e3e,color:#fff,stroke:#e53e3e
+
+    Q --> PG0

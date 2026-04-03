@@ -1,0 +1,31 @@
+---
+title: "Research Quality Evaluation — Grade: C+ (0%)"
+---
+flowchart TD
+    GRADE["Overall Grade: C+<br/>Score: 0%"]
+
+    subgraph SCORES["Dimension Scores"]
+    SOURCE DIVERSITY["Source Diversity<br/>██████░░░░ 68%"]
+    style SOURCE DIVERSITY fill:#d69e2e,color:#fff
+    CLAIM VERIFICATION RATE["Claim Verification Rate<br/>███████░░░ 71%"]
+    style CLAIM VERIFICATION RATE fill:#d69e2e,color:#fff
+    BIAS BALANCE["Bias Balance<br/>██████░░░░ 62%"]
+    style BIAS BALANCE fill:#d69e2e,color:#fff
+    CHALLENGE RESOLUTION["Challenge Resolution<br/>█████░░░░░ 55%"]
+    style CHALLENGE RESOLUTION fill:#e53e3e,color:#fff
+    SOURCE QUALITY["Source Quality<br/>███████░░░ 73%"]
+    style SOURCE QUALITY fill:#d69e2e,color:#fff
+    INTERNAL CONSISTENCY["Internal Consistency<br/>███████░░░ 74%"]
+    style INTERNAL CONSISTENCY fill:#d69e2e,color:#fff
+    end
+
+    subgraph IMPROVEMENTS["Recommended Improvements"]
+    I0["{'area': 'challenge_resolution', 'issue': 'Three of four Devil's Advoc"]
+    I1["{'area': 'bias_balance', 'issue': 'The research demonstrates structura"]
+    I2["{'area': 'claim_verification_rate', 'issue': 'At least 5 claims remain"]
+    I3["{'area': 'source_diversity', 'issue': 'The research lacks representati"]
+    I4["{'area': 'internal_consistency', 'issue': 'Foreknowledge claims are fr"]
+    end
+
+    GRADE --> SCORES
+    SCORES --> IMPROVEMENTS

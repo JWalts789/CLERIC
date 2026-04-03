@@ -1,0 +1,33 @@
+---
+title: "Bias Analysis — Score: 6/10 (Moderate Bias)"
+---
+flowchart TD
+    OQ["Original Query<br/><i>was the 9/11 catastrophe an inside job?</i>"]
+
+    subgraph BIASES["Detected Biases"]
+        B0["{'type': 'loaded terminology + presupposed conclusion', 'quo"]
+        B1["{'type': 'vague conspiracy framing', 'quote': 'inside job', "]
+        B2["{'type': 'missing baseline perspective', 'quote': 'entire qu"]
+    end
+
+    subgraph NEUTRAL["Neutral Reformulations"]
+        NQ0["What does the 9/11 Commission Report conclude about the sequence of events and r"]
+        NQ1["What evidence, if any, supports claims that U.S. officials had advance warning o"]
+        NQ2["What structural engineering analyses explain the collapse of the World Trade Cen"]
+        NQ3["What are the main arguments made by conspiracy theorists regarding 9/11, and how"]
+    end
+
+    subgraph PERSPECTIVES["Required Perspectives"]
+        P0["9/11 Commission Report and mainstream investigativ"]
+        P1["Structural engineering and materials science exper"]
+        P2["Seismology and controlled demolition experts (on s"]
+        P3["U.S. intelligence community (declassified records "]
+        P4["Conspiracy theory researchers and advocates (their"]
+        P5["International intelligence assessments (other nati"]
+    end
+
+    OQ --> BIASES
+    BIASES --> NEUTRAL
+    NEUTRAL --> PERSPECTIVES
+
+    style OQ fill:#d69e2e,color:#fff

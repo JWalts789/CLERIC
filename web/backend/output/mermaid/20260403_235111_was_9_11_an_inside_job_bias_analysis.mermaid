@@ -1,0 +1,33 @@
+---
+title: "Bias Analysis — Score: 7/10 (High Bias)"
+---
+flowchart TD
+    OQ["Original Query<br/><i>Was 9/11 an inside job?</i>"]
+
+    subgraph BIASES["Detected Biases"]
+        B0["{'type': 'Loaded terminology', 'quote': 'inside job', 'expla"]
+        B1["{'type': 'False dichotomy', 'quote': 'Was 9/11 an inside job"]
+        B2["{'type': 'Thesis-proving rather than investigating', 'quote'"]
+    end
+
+    subgraph NEUTRAL["Neutral Reformulations"]
+        NQ0["What evidence exists regarding U.S. government foreknowledge of the 9/11 attacks"]
+        NQ1["What systemic intelligence and security failures preceded 9/11, and were they co"]
+        NQ2["What scientific investigations have examined the structural failure modes of the"]
+        NQ3["What competing hypotheses exist regarding the attacks' origins and execution, an"]
+    end
+
+    subgraph PERSPECTIVES["Required Perspectives"]
+        P0["Structural engineering and demolition experts (re:"]
+        P1["Intelligence community analysts (re: foreknowledge"]
+        P2["Academic historians of U.S. foreign policy (re: ge"]
+        P3["Investigative journalists and fact-checkers (re: c"]
+        P4["Conspiracy theory researchers (re: how such narrat"]
+        P5["Families of victims and affected communities"]
+    end
+
+    OQ --> BIASES
+    BIASES --> NEUTRAL
+    NEUTRAL --> PERSPECTIVES
+
+    style OQ fill:#e53e3e,color:#fff

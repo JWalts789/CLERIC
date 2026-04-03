@@ -1,0 +1,38 @@
+---
+title: "Agent Interaction Sequence"
+---
+sequenceDiagram
+    participant U as User
+    participant BD as Bias Detector
+    participant R as Researcher
+    participant FC as Fact Checker
+    participant DA as Devil's Advocate
+    participant S as Synthesizer
+    participant E as Evaluator
+    participant T as Tools
+    participant M as Memory
+
+    U->>BD: Submit query
+    Note over BD: Analyze for bias,<br/>reformulate neutrally
+
+    BD->>R: Neutral queries +<br/>required perspectives
+    R->>T: Web searches (10 calls)
+    T-->>R: Search results + page content
+    Note over R: Gather multi-perspective<br/>sources
+
+    R->>FC: Sources + claims
+    FC->>T: Verification searches (10 calls)
+    T-->>FC: Independent sources
+    Note over FC: Verify each claim<br/>independently
+
+    FC->>DA: Verified claims
+    Note over DA: Challenge findings,<br/>find weaknesses
+
+    DA->>S: Challenges + findings
+    Note over S: Synthesize balanced<br/>report from verified data
+
+    S->>E: Final report + all data
+    Note over E: Score on 6 dimensions,<br/>assign grade
+
+    E->>M: Store key findings
+    E->>U: Report + evaluation +<br/>Mermaid diagrams

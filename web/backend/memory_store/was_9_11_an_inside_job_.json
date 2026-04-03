@@ -1,0 +1,178 @@
+[
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "evaluation",
+    "value": {
+      "scores": {
+        "source_diversity": 0.68,
+        "claim_verification_rate": 0.71,
+        "bias_balance": 0.62,
+        "challenge_resolution": 0.55,
+        "source_quality": 0.73,
+        "internal_consistency": 0.74
+      },
+      "grade": "C+"
+    },
+    "source": "evaluator",
+    "timestamp": "2026-04-03T23:51:11.392044+00:00",
+    "confidence": 0.5
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_0",
+    "value": {
+      "finding": "U.S. intelligence agencies (CIA, FBI) issued elevated threat warnings about Al Qaeda in spring 2001 and received the August 6, 2001 PDB warning of potential attacks.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "CIA Director Tenet memoir (2007)",
+        "New York Times (Oct 3, 2006)",
+        "White House declassified records",
+        "PBS archives",
+        "9/11 Commission Report"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.392044+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_1",
+    "value": {
+      "finding": "These warnings were generic threat elevation, not specific foreknowledge of the actual attack date, method, targets, or operational plan.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "PDB text (declassified)",
+        "9/11 Commission testimony",
+        "DOJ OIG review",
+        "NIST reports"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.408351+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_2",
+    "value": {
+      "finding": "The FBI and CIA had systemic failures in information-sharing and watchlisting that prevented identification and interdiction of known Al Qaeda operatives present in the U.S. before 9/11.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "9/11 Commission Report",
+        "DOJ Office of Inspector General report (2002-2008 reviews)",
+        "Congressional testimony",
+        "White House declassified documents"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.419441+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_3",
+    "value": {
+      "finding": "These failures were correctable through organizational redesign, as demonstrated by post-9/11 intelligence reforms (DHS creation, information sharing statutes, fusion centers).",
+      "category": "analysis",
+      "confidence": "high",
+      "sources": [
+        "9/11 Commission recommendations",
+        "Post-2001 congressional testimony",
+        "Government Accountability Office reports"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.426445+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_4",
+    "value": {
+      "finding": "The structural collapses of the WTC towers resulted from airplane impact damage, fireproofing dislodgment, and intense fires that degraded steel structural capacity, consistent with NIST investigation and independent peer-reviewed structural engineering analysis.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "NIST investigation (5-volume report, 2005)",
+        "Peer-reviewed engineering journals",
+        "American Society of Civil Engineers",
+        "Bazant et al. (2008)"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.447304+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_5",
+    "value": {
+      "finding": "Controlled demolition hypotheses lack supporting forensic evidence and are inconsistent with documented collapse sequence, timing, and structural mechanics.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "NIST forensic analysis",
+        "Structural engineering literature",
+        "Absence of explosive residue evidence in debris analysis"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.457762+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_6",
+    "value": {
+      "finding": "No credible documentary, testimonial, or forensic evidence supports claims that U.S. officials orchestrated, actively facilitated, or authorized the 9/11 attacks.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "9/11 Commission investigation",
+        "Congressional investigations",
+        "Federal court records",
+        "Published memoirs and testimony"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.468123+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_7",
+    "value": {
+      "finding": "The question 'Was 9/11 an inside job?' conflates multiple distinct claims (foreknowledge vs. causation vs. systemic failure) and should be decomposed into testable sub-questions for meaningful analysis.",
+      "category": "analysis",
+      "confidence": "high",
+      "sources": [
+        "Bias detection analysis",
+        "Epistemology of conspiracy theory research"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.483253+00:00",
+    "confidence": 0.82
+  },
+  {
+    "topic": "Was 9/11 an inside job?",
+    "key": "finding_8",
+    "value": {
+      "finding": "While systemic failures existed, no credible evidence establishes they were sufficient to have prevented the attacks had they been corrected, though they did create unnecessarily high operational risk.",
+      "category": "analysis",
+      "confidence": "moderate",
+      "sources": [
+        "9/11 Commission counterfactual analysis",
+        "Structural analysis of information gaps",
+        "Intelligence studies literature"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:51:11.495910+00:00",
+    "confidence": 0.82
+  }
+]

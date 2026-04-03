@@ -1,0 +1,30 @@
+---
+title: "Research Quality Evaluation — Grade: C+ (0%)"
+---
+flowchart TD
+    GRADE["Overall Grade: C+<br/>Score: 0%"]
+
+    subgraph SCORES["Dimension Scores"]
+    SOURCE DIVERSITY["Source Diversity<br/>█████░░░░░ 55%"]
+    style SOURCE DIVERSITY fill:#e53e3e,color:#fff
+    CLAIM VERIFICATION RATE["Claim Verification Rate<br/>██████░░░░ 62%"]
+    style CLAIM VERIFICATION RATE fill:#d69e2e,color:#fff
+    BIAS BALANCE["Bias Balance<br/>█████░░░░░ 52%"]
+    style BIAS BALANCE fill:#e53e3e,color:#fff
+    CHALLENGE RESOLUTION["Challenge Resolution<br/>████░░░░░░ 48%"]
+    style CHALLENGE RESOLUTION fill:#e53e3e,color:#fff
+    SOURCE QUALITY["Source Quality<br/>█████░░░░░ 58%"]
+    style SOURCE QUALITY fill:#e53e3e,color:#fff
+    INTERNAL CONSISTENCY["Internal Consistency<br/>███████░░░ 70%"]
+    style INTERNAL CONSISTENCY fill:#d69e2e,color:#fff
+    end
+
+    subgraph IMPROVEMENTS["Recommended Improvements"]
+    I0["{'area': 'claim_verification_rate', 'issue': 'Many claims verified as "]
+    I1["{'area': 'challenge_resolution', 'issue': 'Devil's Advocate raised 7 m"]
+    I2["{'area': 'bias_balance', 'issue': 'Alternative explanations labeled 'c"]
+    I3["{'area': 'internal_consistency', 'issue': 'Executive Summary states 'e"]
+    end
+
+    GRADE --> SCORES
+    SCORES --> IMPROVEMENTS

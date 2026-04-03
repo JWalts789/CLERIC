@@ -6,7 +6,24 @@
 
   let { data, overallGrade }: Props = $props();
 
-  let dimensions = $derived(data?.dimensions ?? data?.scores ?? data?.criteria ?? []);
+  let dimensions = $derived.by(() => {
+    // Handle array format (already structured)
+    if (Array.isArray(data?.dimensions)) return data.dimensions;
+    if (Array.isArray(data?.scores)) return data.scores;
+    if (Array.isArray(data?.criteria)) return data.criteria;
+
+    // Handle dict format from evaluator: {"source_diversity": 0.72, ...}
+    const scores = data?.scores;
+    if (scores && typeof scores === 'object' && !Array.isArray(scores)) {
+      return Object.entries(scores)
+        .filter(([_, v]) => typeof v === 'number')
+        .map(([key, value]) => ({
+          name: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          score: (value as number) * 100,
+        }));
+    }
+    return [];
+  });
   let recommendations = $derived(data?.recommendations ?? data?.improvements ?? []);
 
   function gradeColor(grade: string): string {

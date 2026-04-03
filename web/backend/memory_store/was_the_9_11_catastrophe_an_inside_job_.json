@@ -1,0 +1,153 @@
+[
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "evaluation",
+    "value": {
+      "scores": {
+        "source_diversity": 0.55,
+        "claim_verification_rate": 0.62,
+        "bias_balance": 0.52,
+        "challenge_resolution": 0.48,
+        "source_quality": 0.58,
+        "internal_consistency": 0.7
+      },
+      "grade": "C+"
+    },
+    "source": "evaluator",
+    "timestamp": "2026-04-03T23:42:00.730352+00:00",
+    "confidence": 0.5
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_0",
+    "value": {
+      "finding": "U.S. intelligence agencies received warnings before 9/11 and missed critical opportunities to prevent the attack, including CIA withholding information from the FBI about known al-Qaeda operatives.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "Congressional Joint Inquiry (2002)",
+        "9/11 Commission Report",
+        "FBI and CIA investigative records"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.730352+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_1",
+    "value": {
+      "finding": "The official investigation (NIST) concluded that the Twin Towers collapsed due to structural damage from aircraft impact combined with steel strength loss from sustained fire exposure, not controlled demolition.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "NIST NCSTAR 1-9 reports",
+        "NIST thermal and structural analysis",
+        "Popular Mechanics technical analysis"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.746594+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_2",
+    "value": {
+      "finding": "No peer-reviewed structural engineering literature supports the controlled demolition hypothesis, and multiple technical rebuttals cite logistical implausibility and failure to account for observed collapse patterns.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "NIST official reports",
+        "Structural engineering peer-reviewed sources",
+        "Popular Mechanics Debunking 9/11 Myths"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.760200+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_3",
+    "value": {
+      "finding": "The absence of credible insider whistleblower testimony over 20+ years represents strong circumstantial evidence against an inside-job conspiracy, though it is not definitive proof.",
+      "category": "analysis",
+      "confidence": "moderate",
+      "sources": [
+        "Historical comparison to other government whistleblower cases (Pentagon Papers, Snowden)",
+        "Logical analysis of conspiracy sustainability"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.771960+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_4",
+    "value": {
+      "finding": "Intelligence failures preceding 9/11 could result from systemic bureaucratic incompetence or deliberate obstruction; the research cannot independently determine which, though systemic failure is more consistent with how large organizations typically malfunction.",
+      "category": "analysis",
+      "confidence": "moderate",
+      "sources": [
+        "9/11 Commission Report",
+        "Congressional Joint Inquiry",
+        "Government bureaucracy studies"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.780228+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_5",
+    "value": {
+      "finding": "The 9/11 Commission was formally bipartisan and chartered by Congress, but faced time constraints and has been subject to legitimate scholarly criticism regarding depth of investigation into specific areas.",
+      "category": "fact",
+      "confidence": "moderate",
+      "sources": [
+        "Congressional charter documents",
+        "9/11 Commission Report",
+        "Scholarly critiques of Commission scope"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.794158+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_6",
+    "value": {
+      "finding": "Claims about 'molten steel' in debris weeks after 9/11 remain technically unresolved; NIST attributes this to molten aluminum or localized hot spots, but independent metallurgical analysis of recovered materials was not conducted.",
+      "category": "analysis",
+      "confidence": "low",
+      "sources": [
+        "Eyewitness accounts from debris workers",
+        "NIST thermal modeling interpretations"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.809988+00:00",
+    "confidence": 0.78
+  },
+  {
+    "topic": "was the 9/11 catastrophe an inside job?",
+    "key": "finding_7",
+    "value": {
+      "finding": "The research did not independently verify NIST's specific thermal modeling assumptions, structural load calculations, or Column 79 buckling analysis due to resource constraints, limiting confidence in technical details.",
+      "category": "fact",
+      "confidence": "high",
+      "sources": [
+        "Methodological self-assessment",
+        "Research budget limitations"
+      ]
+    },
+    "source": "synthesizer",
+    "timestamp": "2026-04-03T23:42:00.821863+00:00",
+    "confidence": 0.78
+  }
+]
