@@ -24,8 +24,8 @@ FETCH_PAGE_SCHEMA: dict = {
             },
             "max_length": {
                 "type": "integer",
-                "description": "Maximum character length of returned text. Defaults to 5000.",
-                "default": 5000,
+                "description": "Maximum character length of returned text. Defaults to 2000.",
+                "default": 2000,
             },
         },
         "required": ["url"],
@@ -45,7 +45,7 @@ REQUEST_HEADERS = {
 REQUEST_TIMEOUT = 15.0
 
 
-def fetch_page(url: str, max_length: int = 5000) -> str:
+def fetch_page(url: str, max_length: int = 2000) -> str:
     """Fetch a web page and extract its main text content.
 
     Removes navigation, footers, scripts, styles, and other non-content

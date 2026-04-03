@@ -51,6 +51,13 @@ class PipelineResult:
         }
 
 
+def _truncate(text: str, max_chars: int = 3000) -> str:
+    """Truncate text to stay within token budgets between agents."""
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + "\n\n[...truncated for brevity]"
+
+
 class ResearchPipeline:
     """Orchestrates the full multi-agent research pipeline.
 
@@ -135,10 +142,11 @@ class ResearchPipeline:
         self._notify_start("fact_checking")
         fact_checker = FactCheckerAgent(self.config, self.tools)
         fact_check_result = fact_checker.run(
-            research_result.content,
+            "Verify the key claims from this research:",
             context={
                 "original_query": query,
-                "sources_found": json.dumps(research_result.data.get("sources", [])),
+                "research_findings": _truncate(research_result.content, 4000),
+                "sources_found": json.dumps(research_result.data.get("sources", []))[:2000],
             },
         )
         pipeline_result.stages["fact_checking"] = fact_check_result
@@ -151,9 +159,9 @@ class ResearchPipeline:
             "Challenge these research findings:",
             context={
                 "original_query": query,
-                "bias_analysis": bias_result.content,
-                "research_findings": research_result.content,
-                "fact_check_results": fact_check_result.content,
+                "bias_analysis": _truncate(bias_result.content, 1500),
+                "research_findings": _truncate(research_result.content, 4000),
+                "fact_check_results": _truncate(fact_check_result.content, 2000),
             },
         )
         pipeline_result.stages["devils_advocate"] = devils_result
@@ -166,10 +174,10 @@ class ResearchPipeline:
             "Produce the final research report:",
             context={
                 "original_query": query,
-                "bias_analysis": bias_result.content,
-                "research_findings": research_result.content,
-                "fact_check_results": fact_check_result.content,
-                "challenges": devils_result.content,
+                "bias_analysis": _truncate(bias_result.content, 1500),
+                "research_findings": _truncate(research_result.content, 4000),
+                "fact_check_results": _truncate(fact_check_result.content, 2000),
+                "challenges": _truncate(devils_result.content, 3000),
             },
         )
         pipeline_result.stages["synthesis"] = synthesis_result
@@ -183,11 +191,11 @@ class ResearchPipeline:
             "Evaluate this research pipeline output:",
             context={
                 "original_query": query,
-                "bias_detection": bias_result.content,
-                "research": research_result.content,
-                "fact_checking": fact_check_result.content,
-                "devils_advocate": devils_result.content,
-                "final_report": synthesis_result.content,
+                "bias_detection": _truncate(bias_result.content, 1500),
+                "research": _truncate(research_result.content, 3000),
+                "fact_checking": _truncate(fact_check_result.content, 2000),
+                "devils_advocate": _truncate(devils_result.content, 2000),
+                "final_report": _truncate(synthesis_result.content, 4000),
             },
         )
         pipeline_result.stages["evaluation"] = eval_result

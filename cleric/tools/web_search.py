@@ -26,8 +26,8 @@ SEARCH_WEB_SCHEMA: dict = {
             },
             "max_results": {
                 "type": "integer",
-                "description": "Maximum number of results to return. Defaults to 10.",
-                "default": 10,
+                "description": "Maximum number of results to return. Defaults to 5.",
+                "default": 5,
             },
         },
         "required": ["query"],
@@ -35,7 +35,7 @@ SEARCH_WEB_SCHEMA: dict = {
 }
 
 
-def search_web(query: str, max_results: int = 10) -> str:
+def search_web(query: str, max_results: int = 5) -> str:
     """Search the web using DuckDuckGo and return formatted results.
 
     Args:
