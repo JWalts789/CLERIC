@@ -1,4 +1,4 @@
-"""Bias Detector agent -- the first agent in the Verity pipeline.
+"""Bias Detector agent -- the first agent in the CLERIC pipeline.
 
 Analyzes the user's raw query for loaded language, implicit assumptions,
 logical fallacies, and predetermined conclusions.  Produces neutral
@@ -8,8 +8,8 @@ for balanced research.
 
 from __future__ import annotations
 
-from verity.agents.base import BaseAgent
-from verity.config import Config
+from cleric.agents.base import BaseAgent
+from cleric.config import Config
 
 SYSTEM_PROMPT = """\
 You are the Bias Detector, the first stage of a multi-agent research system \

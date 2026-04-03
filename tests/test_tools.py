@@ -1,8 +1,8 @@
-"""Tests for verity.tools.registry and individual tool modules."""
+"""Tests for cleric.tools.registry and individual tool modules."""
 
 import pytest
 
-from verity.tools.registry import ToolRegistry, RegisteredTool
+from cleric.tools.registry import ToolRegistry, RegisteredTool
 
 
 class TestRegisteredTool:
@@ -86,7 +86,7 @@ class TestFileIOTools:
     """Test file_io read_file and write_file functions."""
 
     def test_write_and_read_roundtrip(self, tmp_path):
-        from verity.tools.file_io import read_file, write_file
+        from cleric.tools.file_io import read_file, write_file
 
         path = str(tmp_path / "test.txt")
         result = write_file(path, "hello world")
@@ -96,12 +96,12 @@ class TestFileIOTools:
         assert content == "hello world"
 
     def test_read_nonexistent_file(self):
-        from verity.tools.file_io import read_file
+        from cleric.tools.file_io import read_file
         result = read_file("/nonexistent/path/file.txt")
         assert "File not found" in result
 
     def test_write_creates_parent_dirs(self, tmp_path):
-        from verity.tools.file_io import write_file
+        from cleric.tools.file_io import write_file
         path = str(tmp_path / "a" / "b" / "c.txt")
         result = write_file(path, "deep")
         assert "4 characters" in result

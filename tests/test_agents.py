@@ -1,14 +1,14 @@
-"""Tests for verity.agents.base.BaseAgent and BiasDetectorAgent."""
+"""Tests for cleric.agents.base.BaseAgent and BiasDetectorAgent."""
 
 import json
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from verity.agents.base import BaseAgent, AgentResult
-from verity.agents.bias_detector import BiasDetectorAgent
-from verity.config import Config
-from verity.tools.registry import ToolRegistry
+from cleric.agents.base import BaseAgent, AgentResult
+from cleric.agents.bias_detector import BiasDetectorAgent
+from cleric.config import Config
+from cleric.tools.registry import ToolRegistry
 
 
 class TestBaseAgentRun:

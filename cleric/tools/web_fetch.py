@@ -38,7 +38,7 @@ NOISE_TAGS = [
 ]
 
 REQUEST_HEADERS = {
-    "User-Agent": "Verity Research Agent/0.1 (educational project)",
+    "User-Agent": "CLERIC Research Agent/0.1 (educational project)",
     "Accept": "text/html,application/xhtml+xml",
 }
 

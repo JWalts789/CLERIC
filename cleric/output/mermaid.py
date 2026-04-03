@@ -11,7 +11,7 @@ Produces .mermaid files that document the full research process:
 from pathlib import Path
 from datetime import datetime, timezone
 
-from verity.orchestrator import PipelineResult
+from cleric.orchestrator import PipelineResult
 
 
 class MermaidGenerator:
@@ -76,7 +76,7 @@ class MermaidGenerator:
         overall = eval_stage.data.get("scores", {}).get("overall_score", "?") if eval_stage else "?"
 
         return f"""---
-title: "Verity Research Pipeline"
+title: "C.L.E.R.I.C. Research Pipeline"
 ---
 %%{{init: {{"theme": "base", "themeVariables": {{"primaryColor": "#2d3748", "primaryTextColor": "#fff", "primaryBorderColor": "#4a5568", "lineColor": "#718096", "secondaryColor": "#4a5568", "tertiaryColor": "#2d3748"}}}}}}%%
 flowchart TD

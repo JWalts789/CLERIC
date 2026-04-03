@@ -4,16 +4,16 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-from verity.agents.base import AgentResult
-from verity.agents.bias_detector import BiasDetectorAgent
-from verity.agents.researcher import ResearcherAgent
-from verity.agents.fact_checker import FactCheckerAgent
-from verity.agents.devils_advocate import DevilsAdvocateAgent
-from verity.agents.synthesizer import SynthesizerAgent
-from verity.agents.evaluator import EvaluatorAgent
-from verity.config import Config
-from verity.memory.store import MemoryStore
-from verity.tools.registry import create_default_registry
+from cleric.agents.base import AgentResult
+from cleric.agents.bias_detector import BiasDetectorAgent
+from cleric.agents.researcher import ResearcherAgent
+from cleric.agents.fact_checker import FactCheckerAgent
+from cleric.agents.devils_advocate import DevilsAdvocateAgent
+from cleric.agents.synthesizer import SynthesizerAgent
+from cleric.agents.evaluator import EvaluatorAgent
+from cleric.config import Config
+from cleric.memory.store import MemoryStore
+from cleric.tools.registry import create_default_registry
 
 
 @dataclass

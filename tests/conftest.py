@@ -1,4 +1,4 @@
-"""Shared fixtures for the Verity test suite.
+"""Shared fixtures for the CLERIC test suite.
 
 All tests run WITHOUT an API key — the Anthropic client is always mocked.
 """
@@ -10,8 +10,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from verity.config import Config
-from verity.tools.registry import ToolRegistry
+from cleric.config import Config
+from cleric.tools.registry import ToolRegistry
 
 
 # ---------------------------------------------------------------------------

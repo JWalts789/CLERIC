@@ -8,8 +8,8 @@ Advocate.
 
 from __future__ import annotations
 
-from verity.agents.base import BaseAgent
-from verity.config import Config
+from cleric.agents.base import BaseAgent
+from cleric.config import Config
 
 SYSTEM_PROMPT = """\
 You are the Synthesizer, the final reporting stage of a multi-agent \

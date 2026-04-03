@@ -1,12 +1,12 @@
-"""Tests for verity.output.mermaid.MermaidGenerator."""
+"""Tests for cleric.output.mermaid.MermaidGenerator."""
 
 from pathlib import Path
 
 import pytest
 
-from verity.agents.base import AgentResult
-from verity.orchestrator import PipelineResult
-from verity.output.mermaid import MermaidGenerator
+from cleric.agents.base import AgentResult
+from cleric.orchestrator import PipelineResult
+from cleric.output.mermaid import MermaidGenerator
 
 
 # ---------------------------------------------------------------------------

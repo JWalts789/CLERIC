@@ -1,4 +1,4 @@
-"""Configuration management for Verity.
+"""Configuration management for CLERIC.
 
 Loads settings from environment variables with sensible defaults.
 Uses python-dotenv to support .env files.
@@ -15,7 +15,7 @@ import os
 class Config:
     """Immutable application configuration loaded from environment variables.
 
-    All VERITY_* env vars map to fields with the prefix stripped and lowercased.
+    All CLERIC_* env vars map to fields with the prefix stripped and lowercased.
     ANTHROPIC_API_KEY is the only required variable.
     """
 
@@ -47,11 +47,11 @@ class Config:
 
         return cls(
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", ""),
-            model=os.getenv("VERITY_MODEL", "claude-sonnet-4-6"),
-            max_search_results=int(os.getenv("VERITY_MAX_SEARCH_RESULTS", "10")),
-            memory_dir=Path(os.getenv("VERITY_MEMORY_DIR", "./memory_store")),
-            output_dir=Path(os.getenv("VERITY_OUTPUT_DIR", "./output")),
-            max_tokens=int(os.getenv("VERITY_MAX_TOKENS", "4096")),
+            model=os.getenv("CLERIC_MODEL", "claude-sonnet-4-6"),
+            max_search_results=int(os.getenv("CLERIC_MAX_SEARCH_RESULTS", "10")),
+            memory_dir=Path(os.getenv("CLERIC_MEMORY_DIR", "./memory_store")),
+            output_dir=Path(os.getenv("CLERIC_OUTPUT_DIR", "./output")),
+            max_tokens=int(os.getenv("CLERIC_MAX_TOKENS", "4096")),
         )
 
     def ensure_directories(self) -> None:

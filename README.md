@@ -1,8 +1,8 @@
-# Verity
+# C.L.E.R.I.C.
 
-**Multi-agent research system for unbiased, auditable research.**
+**Cross-Lateral Evidence Review for Information Clarity**
 
-Verity decomposes research into specialized agent roles that check each other's work. Instead of trusting a single LLM response, it runs a six-stage pipeline: bias detection, multi-perspective research, independent fact-checking, adversarial challenge, balanced synthesis, and quantitative evaluation.
+C.L.E.R.I.C. decomposes research into specialized agent roles that check each other's work. Instead of trusting a single LLM response, it runs a six-stage pipeline: bias detection, multi-perspective research, independent fact-checking, adversarial challenge, balanced synthesis, and quantitative evaluation.
 
 Every claim is sourced. Every bias is flagged. Every weakness is challenged. The result is research you can audit.
 
@@ -59,7 +59,7 @@ Outputs: Report (.md) + Diagrams (.mermaid) + Raw Data (.json)
 
 ## Why Not Just Ask an LLM?
 
-| Single LLM | Verity |
+| Single LLM | C.L.E.R.I.C. |
 |-------------|--------|
 | One perspective, one pass | Six specialized agents with distinct roles |
 | No bias detection | Query analyzed for bias before research begins |
@@ -72,8 +72,8 @@ Outputs: Report (.md) + Diagrams (.mermaid) + Raw Data (.json)
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/verity.git
-cd verity
+git clone https://github.com/yourusername/cleric.git
+cd cleric
 pip install -e .
 ```
 
@@ -88,28 +88,28 @@ cp .env.example .env
 
 ```bash
 # Basic research query
-verity "What are the health effects of intermittent fasting?"
+cleric "What are the health effects of intermittent fasting?"
 
 # With JSON output
-verity "Is nuclear energy safe?" --json
+cleric "Is nuclear energy safe?" --json
 
 # Skip diagram generation
-verity "What caused the 2008 financial crisis?" --no-mermaid
+cleric "What caused the 2008 financial crisis?" --no-mermaid
 
 # Verbose mode (show all agent outputs)
-verity "Are electric vehicles better for the environment?" --verbose
+cleric "Are electric vehicles better for the environment?" --verbose
 
 # Use a specific model
-verity "What is quantum computing?" --model claude-sonnet-4-6
+cleric "What is quantum computing?" --model claude-sonnet-4-6
 ```
 
 ### Python API
 
 ```python
-from verity.config import Config
-from verity.orchestrator import ResearchPipeline
-from verity.output.mermaid import MermaidGenerator
-from verity.output.report import ReportGenerator
+from cleric.config import Config
+from cleric.orchestrator import ResearchPipeline
+from cleric.output.mermaid import MermaidGenerator
+from cleric.output.report import ReportGenerator
 
 config = Config.from_env()
 pipeline = ResearchPipeline(config)
@@ -131,7 +131,7 @@ report_path = reporter.generate(result)
 
 ## Unbiased by Design
 
-Verity's core principle is that **the system actively resists bias at every stage**:
+C.L.E.R.I.C.'s core principle is that **the system actively resists bias at every stage**:
 
 1. **Bias Detector** runs before any research. It scores the query's bias (0-10), strips loaded language, and identifies perspectives that must be represented — including perspectives the user's framing may have excluded.
 
@@ -185,7 +185,7 @@ Overall grade: weighted average mapped to A-F scale. A score of 0.8+ is genuinel
 
 ## Memory System
 
-Verity maintains a persistent JSON-based memory store. When you research a topic, key findings are stored with confidence scores. Future research on related topics can build on prior work instead of starting from scratch.
+CLERIC maintains a persistent JSON-based memory store. When you research a topic, key findings are stored with confidence scores. Future research on related topics can build on prior work instead of starting from scratch.
 
 ```
 memory_store/
@@ -196,7 +196,7 @@ memory_store/
 ## Project Structure
 
 ```
-verity/
+cleric/
   __init__.py
   config.py              # Environment-based configuration
   cli.py                 # Rich terminal interface
@@ -237,16 +237,16 @@ tests/
 | Environment Variable | Default | Description |
 |---------------------|---------|-------------|
 | `ANTHROPIC_API_KEY` | (required) | Your Anthropic API key |
-| `VERITY_MODEL` | `claude-sonnet-4-6` | Claude model to use |
-| `VERITY_MAX_SEARCH_RESULTS` | `10` | Max results per web search |
-| `VERITY_MEMORY_DIR` | `./memory_store` | Memory persistence directory |
-| `VERITY_OUTPUT_DIR` | `./output` | Output file directory |
-| `VERITY_MAX_TOKENS` | `4096` | Max tokens per agent call |
+| `CLERIC_MODEL` | `claude-sonnet-4-6` | Claude model to use |
+| `CLERIC_MAX_SEARCH_RESULTS` | `10` | Max results per web search |
+| `CLERIC_MEMORY_DIR` | `./memory_store` | Memory persistence directory |
+| `CLERIC_OUTPUT_DIR` | `./output` | Output file directory |
+| `CLERIC_MAX_TOKENS` | `4096` | Max tokens per agent call |
 
 ## Running Tests
 
 ```bash
-pytest tests/ -v --cov=verity
+pytest tests/ -v --cov=cleric
 ```
 
 ## License

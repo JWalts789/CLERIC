@@ -1,6 +1,6 @@
 """Base agent class that handles Claude API interaction with tool use.
 
-Every Verity agent inherits from BaseAgent, which owns the agentic loop:
+Every CLERIC agent inherits from BaseAgent, which owns the agentic loop:
 send a message, execute any tool calls Claude requests, feed results back,
 and repeat until a final text response is produced.
 """
@@ -14,8 +14,8 @@ from dataclasses import dataclass, field
 
 from anthropic import Anthropic
 
-from verity.config import Config
-from verity.tools.registry import ToolRegistry
+from cleric.config import Config
+from cleric.tools.registry import ToolRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class AgentResult:
 
 
 class BaseAgent:
-    """Abstract base for all Verity agents.
+    """Abstract base for all CLERIC agents.
 
     Subclasses typically only need to supply a system prompt and optionally
     override ``_parse_structured_data`` for custom extraction logic.

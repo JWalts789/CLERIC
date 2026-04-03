@@ -7,9 +7,9 @@ disagreement rather than confirmation.
 
 from __future__ import annotations
 
-from verity.agents.base import BaseAgent
-from verity.config import Config
-from verity.tools.registry import ToolRegistry
+from cleric.agents.base import BaseAgent
+from cleric.config import Config
+from cleric.tools.registry import ToolRegistry
 
 SYSTEM_PROMPT = """\
 You are the Researcher, the primary evidence-gathering agent in a \

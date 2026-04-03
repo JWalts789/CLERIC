@@ -3,9 +3,9 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
-name = "verity"
+name = "cleric"
 version = "0.1.0"
-description = "Multi-agent research system for unbiased, auditable research"
+description = "C.L.E.R.I.C. — Cross-Lateral Evidence Review for Information Clarity"
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
@@ -27,14 +27,14 @@ dev = [
 ]
 
 [project.scripts]
-verity = "verity.cli:main"
+cleric = "cleric.cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 
 [tool.coverage.run]
-source = ["verity"]
+source = ["cleric"]
 omit = ["tests/*"]
 
 [tool.coverage.report]

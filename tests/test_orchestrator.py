@@ -1,12 +1,12 @@
-"""Tests for verity.orchestrator — PipelineResult and ResearchPipeline."""
+"""Tests for cleric.orchestrator — PipelineResult and ResearchPipeline."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from verity.agents.base import AgentResult
-from verity.orchestrator import PipelineResult, ResearchPipeline
-from verity.config import Config
+from cleric.agents.base import AgentResult
+from cleric.orchestrator import PipelineResult, ResearchPipeline
+from cleric.config import Config
 
 
 # ---------------------------------------------------------------------------
@@ -87,13 +87,13 @@ class TestResearchPipeline:
         mock_cls = MagicMock(return_value=agent_instance)
         return mock_cls
 
-    @patch("verity.orchestrator.EvaluatorAgent")
-    @patch("verity.orchestrator.SynthesizerAgent")
-    @patch("verity.orchestrator.DevilsAdvocateAgent")
-    @patch("verity.orchestrator.FactCheckerAgent")
-    @patch("verity.orchestrator.ResearcherAgent")
-    @patch("verity.orchestrator.BiasDetectorAgent")
-    @patch("verity.orchestrator.create_default_registry")
+    @patch("cleric.orchestrator.EvaluatorAgent")
+    @patch("cleric.orchestrator.SynthesizerAgent")
+    @patch("cleric.orchestrator.DevilsAdvocateAgent")
+    @patch("cleric.orchestrator.FactCheckerAgent")
+    @patch("cleric.orchestrator.ResearcherAgent")
+    @patch("cleric.orchestrator.BiasDetectorAgent")
+    @patch("cleric.orchestrator.create_default_registry")
     def test_pipeline_runs_all_stages(
         self,
         mock_registry,
@@ -135,13 +135,13 @@ class TestResearchPipeline:
         assert result.evaluation_scores == {"overall_score": 0.85}
         assert result.duration_seconds >= 0
 
-    @patch("verity.orchestrator.EvaluatorAgent")
-    @patch("verity.orchestrator.SynthesizerAgent")
-    @patch("verity.orchestrator.DevilsAdvocateAgent")
-    @patch("verity.orchestrator.FactCheckerAgent")
-    @patch("verity.orchestrator.ResearcherAgent")
-    @patch("verity.orchestrator.BiasDetectorAgent")
-    @patch("verity.orchestrator.create_default_registry")
+    @patch("cleric.orchestrator.EvaluatorAgent")
+    @patch("cleric.orchestrator.SynthesizerAgent")
+    @patch("cleric.orchestrator.DevilsAdvocateAgent")
+    @patch("cleric.orchestrator.FactCheckerAgent")
+    @patch("cleric.orchestrator.ResearcherAgent")
+    @patch("cleric.orchestrator.BiasDetectorAgent")
+    @patch("cleric.orchestrator.create_default_registry")
     def test_callbacks_fire_in_order(
         self,
         mock_registry,
@@ -177,13 +177,13 @@ class TestResearchPipeline:
         assert started == expected_stages
         assert completed == expected_stages
 
-    @patch("verity.orchestrator.EvaluatorAgent")
-    @patch("verity.orchestrator.SynthesizerAgent")
-    @patch("verity.orchestrator.DevilsAdvocateAgent")
-    @patch("verity.orchestrator.FactCheckerAgent")
-    @patch("verity.orchestrator.ResearcherAgent")
-    @patch("verity.orchestrator.BiasDetectorAgent")
-    @patch("verity.orchestrator.create_default_registry")
+    @patch("cleric.orchestrator.EvaluatorAgent")
+    @patch("cleric.orchestrator.SynthesizerAgent")
+    @patch("cleric.orchestrator.DevilsAdvocateAgent")
+    @patch("cleric.orchestrator.FactCheckerAgent")
+    @patch("cleric.orchestrator.ResearcherAgent")
+    @patch("cleric.orchestrator.BiasDetectorAgent")
+    @patch("cleric.orchestrator.create_default_registry")
     def test_memory_storage_after_pipeline(
         self,
         mock_registry,
@@ -211,13 +211,13 @@ class TestResearchPipeline:
         assert len(entries) >= 1
         assert entries[0].key == "evaluation"
 
-    @patch("verity.orchestrator.EvaluatorAgent")
-    @patch("verity.orchestrator.SynthesizerAgent")
-    @patch("verity.orchestrator.DevilsAdvocateAgent")
-    @patch("verity.orchestrator.FactCheckerAgent")
-    @patch("verity.orchestrator.ResearcherAgent")
-    @patch("verity.orchestrator.BiasDetectorAgent")
-    @patch("verity.orchestrator.create_default_registry")
+    @patch("cleric.orchestrator.EvaluatorAgent")
+    @patch("cleric.orchestrator.SynthesizerAgent")
+    @patch("cleric.orchestrator.DevilsAdvocateAgent")
+    @patch("cleric.orchestrator.FactCheckerAgent")
+    @patch("cleric.orchestrator.ResearcherAgent")
+    @patch("cleric.orchestrator.BiasDetectorAgent")
+    @patch("cleric.orchestrator.create_default_registry")
     def test_token_tallying(
         self,
         mock_registry,

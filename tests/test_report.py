@@ -1,12 +1,12 @@
-"""Tests for verity.output.report.ReportGenerator."""
+"""Tests for cleric.output.report.ReportGenerator."""
 
 from pathlib import Path
 
 import pytest
 
-from verity.agents.base import AgentResult
-from verity.orchestrator import PipelineResult
-from verity.output.report import ReportGenerator
+from cleric.agents.base import AgentResult
+from cleric.orchestrator import PipelineResult
+from cleric.output.report import ReportGenerator
 
 
 # ---------------------------------------------------------------------------
@@ -103,7 +103,7 @@ class TestReportGenerator:
         path = gen.generate(_make_pipeline_result())
         content = path.read_text(encoding="utf-8")
 
-        assert "# Verity Research Report" in content
+        assert "# C.L.E.R.I.C. Research Report" in content
         assert "What causes climate change?" in content
         assert "A-" in content
 

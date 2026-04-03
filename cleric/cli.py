@@ -1,4 +1,4 @@
-"""Command-line interface for Verity research pipeline."""
+"""Command-line interface for C.L.E.R.I.C. research pipeline."""
 
 import argparse
 import json
@@ -11,10 +11,10 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.table import Table
 from rich.markdown import Markdown
 
-from verity.config import Config
-from verity.orchestrator import ResearchPipeline, PipelineResult
-from verity.output.mermaid import MermaidGenerator
-from verity.output.report import ReportGenerator
+from cleric.config import Config
+from cleric.orchestrator import ResearchPipeline, PipelineResult
+from cleric.output.mermaid import MermaidGenerator
+from cleric.output.report import ReportGenerator
 
 
 console = Console()
@@ -31,7 +31,7 @@ STAGE_LABELS = {
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="verity",
+        prog="cleric",
         description="Multi-agent research system for unbiased, auditable research.",
     )
     parser.add_argument("query", nargs="?", help="Research query to investigate")
@@ -46,8 +46,8 @@ def main():
 
     if not args.query:
         console.print(Panel(
-            "[bold]Verity[/bold] — Multi-Agent Research System\n\n"
-            "Usage: verity \"Your research question here\"\n\n"
+            "[bold]C.L.E.R.I.C.[/bold] — Cross-Lateral Evidence Review for Information Clarity\n\n"
+            "Usage: cleric \"Your research question here\"\n\n"
             "Options:\n"
             "  --json         Output raw JSON\n"
             "  --no-mermaid   Skip diagram generation\n"
@@ -55,7 +55,7 @@ def main():
             "  --verbose      Show detailed agent output\n"
             "  --model MODEL  Override Claude model\n"
             "  --output-dir   Override output directory",
-            title="Verity",
+            title="C.L.E.R.I.C.",
             border_style="blue",
         ))
         sys.exit(0)
@@ -71,7 +71,7 @@ def main():
     console.print()
     console.print(Panel(
         f"[bold]{args.query}[/bold]",
-        title="[bold blue]Verity Research Pipeline[/bold blue]",
+        title="[bold blue]C.L.E.R.I.C. Research Pipeline[/bold blue]",
         border_style="blue",
     ))
     console.print()

@@ -1,4 +1,4 @@
-"""Tests for verity.config.Config."""
+"""Tests for cleric.config.Config."""
 
 import os
 from pathlib import Path
@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from verity.config import Config
+from cleric.config import Config
 
 
 class TestConfigDirect:
@@ -50,11 +50,11 @@ class TestConfigFromEnv:
     def test_loads_api_key_from_env(self, tmp_path: Path):
         env = {
             "ANTHROPIC_API_KEY": "sk-from-env",
-            "VERITY_MODEL": "claude-test-model",
-            "VERITY_MAX_SEARCH_RESULTS": "20",
-            "VERITY_MEMORY_DIR": str(tmp_path / "mem"),
-            "VERITY_OUTPUT_DIR": str(tmp_path / "out"),
-            "VERITY_MAX_TOKENS": "2048",
+            "CLERIC_MODEL": "claude-test-model",
+            "CLERIC_MAX_SEARCH_RESULTS": "20",
+            "CLERIC_MEMORY_DIR": str(tmp_path / "mem"),
+            "CLERIC_OUTPUT_DIR": str(tmp_path / "out"),
+            "CLERIC_MAX_TOKENS": "2048",
         }
         with patch.dict(os.environ, env, clear=False):
             cfg = Config.from_env(dotenv_path="/dev/null")
@@ -72,8 +72,8 @@ class TestConfigFromEnv:
 
     def test_defaults_when_env_unset(self):
         env = {"ANTHROPIC_API_KEY": "sk-test"}
-        # Clear VERITY_* vars to ensure defaults
-        cleared = {k: "" for k in os.environ if k.startswith("VERITY_")}
+        # Clear CLERIC_* vars to ensure defaults
+        cleared = {k: "" for k in os.environ if k.startswith("CLERIC_")}
         with patch.dict(os.environ, {**cleared, **env}, clear=False):
             cfg = Config.from_env(dotenv_path="/dev/null")
 

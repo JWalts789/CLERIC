@@ -7,9 +7,9 @@ alongside their Python implementations, enabling dynamic tool use.
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-from verity.tools.web_search import search_web, SEARCH_WEB_SCHEMA
-from verity.tools.web_fetch import fetch_page, FETCH_PAGE_SCHEMA
-from verity.tools.file_io import read_file, write_file, READ_FILE_SCHEMA, WRITE_FILE_SCHEMA
+from cleric.tools.web_search import search_web, SEARCH_WEB_SCHEMA
+from cleric.tools.web_fetch import fetch_page, FETCH_PAGE_SCHEMA
+from cleric.tools.file_io import read_file, write_file, READ_FILE_SCHEMA, WRITE_FILE_SCHEMA
 
 
 @dataclass

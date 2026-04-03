@@ -1,10 +1,10 @@
-"""Tests for verity.memory.store.MemoryStore."""
+"""Tests for cleric.memory.store.MemoryStore."""
 
 from pathlib import Path
 
 import pytest
 
-from verity.memory.store import MemoryStore, MemoryEntry
+from cleric.memory.store import MemoryStore, MemoryEntry
 
 
 class TestMemoryStoreBasic:
