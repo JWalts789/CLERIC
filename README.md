@@ -1,6 +1,6 @@
 # C.L.E.R.I.C.
 
-**Cross-Lateral Evidence Review for Information Clarity**
+**Cross-Lateral Evidence Review for Informational Clarity**
 
 C.L.E.R.I.C. decomposes research into specialized agent roles that check each other's work. Instead of trusting a single LLM response, it runs a six-stage pipeline: bias detection, multi-perspective research, independent fact-checking, adversarial challenge, balanced synthesis, and quantitative evaluation.
 
