@@ -93,6 +93,8 @@ class SynthesizerAgent(BaseAgent):
     well-structured report.
     """
 
+    expected_json_keys = ["key_findings", "confidence_overall"]
+
     def __init__(self, config: Config) -> None:
         super().__init__(
             name="Synthesizer",

@@ -94,6 +94,8 @@ class DevilsAdvocateAgent(BaseAgent):
     weaknesses that must be addressed in the final synthesis.
     """
 
+    expected_json_keys = ["challenges"]
+
     def __init__(self, config: Config) -> None:
         super().__init__(
             name="Devil's Advocate",

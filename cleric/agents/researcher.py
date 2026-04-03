@@ -77,6 +77,8 @@ class ResearcherAgent(BaseAgent):
     tools registered.
     """
 
+    expected_json_keys = ["sources"]
+
     def __init__(self, config: Config, tools: ToolRegistry) -> None:
         super().__init__(
             name="Researcher",

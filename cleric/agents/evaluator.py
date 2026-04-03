@@ -122,6 +122,8 @@ class EvaluatorAgent(BaseAgent):
     actionable improvement recommendations.
     """
 
+    expected_json_keys = ["scores", "overall_score", "grade", "improvements"]
+
     def __init__(self, config: Config) -> None:
         super().__init__(
             name="Evaluator",

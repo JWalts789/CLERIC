@@ -79,6 +79,8 @@ class BiasDetectorAgent(BaseAgent):
     and a list of perspectives that must be represented.
     """
 
+    expected_json_keys = ["bias_score", "neutral_queries", "required_perspectives"]
+
     def __init__(self, config: Config) -> None:
         super().__init__(
             name="Bias Detector",

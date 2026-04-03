@@ -55,6 +55,11 @@ class BaseAgent:
         tools: Optional tool registry.  Agents that don't need tools pass None.
     """
 
+    # Subclasses can set this to a list of JSON keys that MUST appear
+    # in the structured data.  If extraction misses them, a follow-up
+    # prompt asks the model to emit just the JSON block.
+    expected_json_keys: list[str] = []
+
     def __init__(
         self,
         name: str,
@@ -112,6 +117,7 @@ class BaseAgent:
                     tool_calls_made,
                     total_input_tokens,
                     total_output_tokens,
+                    messages=messages,
                 )
 
     # ------------------------------------------------------------------
@@ -193,8 +199,15 @@ class BaseAgent:
         tool_calls_made: list[dict],
         total_input_tokens: int,
         total_output_tokens: int,
+        messages: list[dict] | None = None,
     ) -> AgentResult:
-        """Extract text content and structured data from the final response."""
+        """Extract text content and structured data from the final response.
+
+        If the agent defines ``expected_json_keys`` and the initial parse
+        misses them, a single follow-up prompt asks the model to emit just
+        the JSON block.  This handles models that write great prose but
+        skip the fenced JSON output.
+        """
         text_parts: list[str] = []
         for block in response.content:
             if hasattr(block, "text"):
@@ -203,12 +216,29 @@ class BaseAgent:
         text_content = "".join(text_parts)
         data = self._parse_structured_data(text_content)
 
+        # Retry: if expected keys are missing, ask for just the JSON
+        if self.expected_json_keys and messages is not None:
+            missing = [k for k in self.expected_json_keys if k not in data]
+            if missing:
+                logger.info(
+                    "%s missing expected JSON keys %s — requesting structured output",
+                    self.name, missing,
+                )
+                retry_data, retry_tokens = self._request_json_retry(
+                    text_content, messages
+                )
+                if retry_data:
+                    data.update(retry_data)
+                total_input_tokens += retry_tokens.get("input", 0)
+                total_output_tokens += retry_tokens.get("output", 0)
+
         logger.info(
-            "%s finished (tokens: in=%d out=%d, tools=%d)",
+            "%s finished (tokens: in=%d out=%d, tools=%d, data_keys=%s)",
             self.name,
             total_input_tokens,
             total_output_tokens,
             len(tool_calls_made),
+            list(data.keys()),
         )
 
         return AgentResult(
@@ -220,18 +250,82 @@ class BaseAgent:
             tokens_used={"input": total_input_tokens, "output": total_output_tokens},
         )
 
+    def _request_json_retry(
+        self, original_response: str, messages: list[dict]
+    ) -> tuple[dict, dict]:
+        """Send a follow-up asking the model to emit structured JSON.
+
+        Returns:
+            Tuple of (parsed_data, token_usage).
+        """
+        retry_prompt = (
+            "Your analysis above was excellent, but I need the structured "
+            "JSON output block as specified in your instructions. Please "
+            "output ONLY a single ```json fenced code block with the "
+            "required JSON object. No other text — just the JSON block."
+        )
+
+        retry_messages = messages + [
+            {"role": "assistant", "content": original_response},
+            {"role": "user", "content": retry_prompt},
+        ]
+
+        kwargs: dict = {
+            "model": self.config.model,
+            "max_tokens": self.config.max_tokens,
+            "system": self.system_prompt,
+            "messages": retry_messages,
+        }
+
+        logger.debug("%s sending JSON retry request", self.name)
+        retry_response = self.client.messages.create(**kwargs)
+
+        tokens = {
+            "input": retry_response.usage.input_tokens,
+            "output": retry_response.usage.output_tokens,
+        }
+
+        retry_text = ""
+        for block in retry_response.content:
+            if hasattr(block, "text"):
+                retry_text += block.text
+
+        data = self._parse_structured_data(retry_text)
+
+        if data:
+            logger.info("%s JSON retry succeeded: keys=%s", self.name, list(data.keys()))
+        else:
+            logger.warning("%s JSON retry also produced no structured data", self.name)
+
+        return data, tokens
+
     def _parse_structured_data(self, text: str) -> dict:
         """Extract JSON data blocks from agent response text.
 
-        Agents are prompted to embed structured output inside fenced
-        ``json`` code blocks.  This method finds all such blocks, parses
-        them, and merges any top-level dicts into a single dict.
+        Tries multiple strategies:
+        1. Fenced ```json code blocks (standard)
+        2. Fenced ``` blocks that contain valid JSON (missing language tag)
+        3. Bare JSON objects at the end of the response (no fencing at all)
 
         Returns:
             Merged dictionary of all successfully parsed JSON blocks.
         """
         data: dict = {}
+
+        # Strategy 1: fenced json blocks (standard)
         json_blocks = re.findall(r"```json\s*\n(.*?)\n```", text, re.DOTALL)
+
+        # Strategy 2: fenced blocks without language tag that look like JSON
+        if not json_blocks:
+            generic_blocks = re.findall(r"```\s*\n(.*?)\n```", text, re.DOTALL)
+            json_blocks = [b for b in generic_blocks if b.strip().startswith("{")]
+
+        # Strategy 3: bare JSON object at the end of the response
+        if not json_blocks:
+            bare_match = re.search(r"\n(\{[\s\S]*\})\s*$", text)
+            if bare_match:
+                json_blocks = [bare_match.group(1)]
+
         for idx, block in enumerate(json_blocks):
             try:
                 parsed = json.loads(block)
@@ -240,10 +334,28 @@ class BaseAgent:
                 else:
                     data[f"data_{idx}"] = parsed
             except json.JSONDecodeError:
-                logger.warning(
-                    "%s produced invalid JSON block #%d", self.name, idx
-                )
+                # Try to fix common issues: trailing commas, unquoted keys
+                cleaned = self._clean_json(block)
+                try:
+                    parsed = json.loads(cleaned)
+                    if isinstance(parsed, dict):
+                        data.update(parsed)
+                    else:
+                        data[f"data_{idx}"] = parsed
+                except json.JSONDecodeError:
+                    logger.warning(
+                        "%s produced invalid JSON block #%d", self.name, idx
+                    )
         return data
+
+    @staticmethod
+    def _clean_json(text: str) -> str:
+        """Attempt to fix common JSON issues from LLM output."""
+        # Remove trailing commas before } or ]
+        text = re.sub(r",\s*([}\]])", r"\1", text)
+        # Remove comments (// style)
+        text = re.sub(r"//.*?$", "", text, flags=re.MULTILINE)
+        return text
 
     def __repr__(self) -> str:
         return f"<{type(self).__name__} name={self.name!r} role={self.role!r}>"

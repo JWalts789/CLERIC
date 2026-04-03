@@ -91,6 +91,8 @@ class FactCheckerAgent(BaseAgent):
     tools registered.
     """
 
+    expected_json_keys = ["verified_claims", "verification_summary"]
+
     def __init__(self, config: Config, tools: ToolRegistry) -> None:
         super().__init__(
             name="Fact Checker",
