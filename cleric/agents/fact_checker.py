@@ -94,6 +94,16 @@ JSON block:
 and important status.
 - Time-sensitivity matters: a fact from 2020 may be outdated in 2026.
 - Your job is accuracy, not agreement with the Researcher.
+
+## Handling fetch errors — CRITICAL
+- You MUST use your web_search and fetch_page tools to independently verify \
+claims.  Do not skip verification.
+- If fetch_page returns errors (403, timeouts, etc.), rely on search snippets \
+for verification evidence.  A search snippet that confirms or contradicts \
+a claim is still valid evidence.
+- You MUST include the JSON block with verified_claims even if verification \
+was limited.  Mark claims as UNVERIFIED with appropriate confidence scores \
+rather than omitting them.
 """
 
 

@@ -4,6 +4,9 @@ Uses httpx for HTTP requests and BeautifulSoup for HTML parsing,
 stripping navigation, scripts, and other non-content elements.
 """
 
+import random
+import time
+
 import httpx
 from bs4 import BeautifulSoup
 
@@ -37,12 +40,65 @@ NOISE_TAGS = [
     "form", "iframe", "noscript", "svg",
 ]
 
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+]
+
 REQUEST_HEADERS = {
-    "User-Agent": "CLERIC Research Agent/0.1 (educational project)",
-    "Accept": "text/html,application/xhtml+xml",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
 }
 
 REQUEST_TIMEOUT = 15.0
+
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503}
+MAX_RETRIES = 2
+RETRY_DELAY = 2.0
+
+
+def _make_request(url: str) -> httpx.Response:
+    """Make an HTTP GET request with retry logic and rotating user agents.
+
+    Retries up to MAX_RETRIES times for transient errors (429, 500, 502, 503).
+    Returns 403 errors immediately without retrying.
+
+    Raises:
+        httpx.HTTPStatusError: For non-retryable HTTP errors or after retries exhausted.
+        httpx.RequestError: For connection-level failures after retries exhausted.
+    """
+    last_exc: Exception | None = None
+
+    for attempt in range(1 + MAX_RETRIES):
+        headers = {**REQUEST_HEADERS, "User-Agent": random.choice(USER_AGENTS)}
+        try:
+            response = httpx.get(
+                url,
+                headers=headers,
+                timeout=REQUEST_TIMEOUT,
+                follow_redirects=True,
+            )
+            response.raise_for_status()
+            return response
+        except httpx.HTTPStatusError as e:
+            status = e.response.status_code
+            if status == 403:
+                raise
+            if status in RETRYABLE_STATUS_CODES and attempt < MAX_RETRIES:
+                last_exc = e
+                time.sleep(RETRY_DELAY)
+                continue
+            raise
+        except httpx.RequestError as e:
+            if attempt < MAX_RETRIES:
+                last_exc = e
+                time.sleep(RETRY_DELAY)
+                continue
+            raise
+
+    raise last_exc  # type: ignore[misc]  # pragma: no cover
 
 
 def fetch_page(url: str, max_length: int = 2000) -> str:
@@ -62,15 +118,15 @@ def fetch_page(url: str, max_length: int = 2000) -> str:
         return "Wikipedia is blocked as a source. Use primary sources (academic papers, government reports, established journalism) instead."
 
     try:
-        response = httpx.get(
-            url,
-            headers=REQUEST_HEADERS,
-            timeout=REQUEST_TIMEOUT,
-            follow_redirects=True,
-        )
-        response.raise_for_status()
+        response = _make_request(url)
     except httpx.HTTPStatusError as e:
-        return f"HTTP error fetching {url}: {e.response.status_code}"
+        status = e.response.status_code
+        if status == 403:
+            return (
+                f"Access denied (403) for {url}. "
+                "Use search snippet content instead of full page fetch."
+            )
+        return f"HTTP error fetching {url}: {status}"
     except httpx.RequestError as e:
         return f"Request failed for {url}: {e}"
 

@@ -201,6 +201,7 @@
               <path d="M12 8v4M12 16h.01" />
             </svg>
             <p>{errorMsg}</p>
+            <button class="retry-btn" onclick={() => handleSubmit(query)}>Retry</button>
           </div>
         {/if}
 
@@ -421,6 +422,27 @@
   .error-banner p {
     font-size: 0.9rem;
     margin: 0;
+    color: #fca5a5;
+    flex: 1;
+  }
+
+  .retry-btn {
+    flex-shrink: 0;
+    padding: 6px 16px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: var(--radius-sm);
+    color: #f87171;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .retry-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.6);
     color: #fca5a5;
   }
 

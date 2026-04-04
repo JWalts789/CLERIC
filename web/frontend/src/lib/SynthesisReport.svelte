@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { marked } from 'marked';
+  import DOMPurify from 'dompurify';
+
   interface Props {
     data: Record<string, any>;
     content: string;
@@ -10,37 +13,12 @@
   let findings = $derived(data?.key_findings ?? data?.findings ?? []);
 
   /**
-   * Simple markdown-to-HTML converter for the synthesis report.
-   * Handles headers, bold, italic, lists, links, blockquotes, and code.
+   * Convert markdown to sanitized HTML using `marked` + DOMPurify.
    */
   function markdownToHtml(md: string): string {
     if (!md) return '';
-    return md
-      // Code blocks
-      .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code class="lang-$1">$2</code></pre>')
-      // Inline code
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      // Headers
-      .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
-      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-      // Bold and italic
-      .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      // Blockquotes
-      .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-      // Unordered lists
-      .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
-      // Links
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
-      // Horizontal rules
-      .replace(/^---$/gm, '<hr />')
-      // Line breaks into paragraphs (simplified)
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/^(?!<[hbluop])/gm, '')
-      ;
+    const raw = marked.parse(md, { async: false }) as string;
+    return DOMPurify.sanitize(raw);
   }
 </script>
 

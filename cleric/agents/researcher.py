@@ -98,6 +98,16 @@ coverage when both are available.
 before moving on.
 - Record every search query you use so the pipeline is auditable.
 - ALWAYS include the JSON block at the end — it is required for downstream agents.
+
+## Handling fetch errors — CRITICAL
+- If a fetch_page call returns an HTTP error or "Access denied", use the \
+search snippet content as your source.  Note in credibility_notes that \
+full page content was unavailable and the source is based on a search snippet.
+- You MUST include the JSON block even if some or all fetches failed.  Use \
+the information you gathered from search snippets.
+- Do NOT report 0 sources.  If you searched and found results, those search \
+results ARE your sources — include them with their titles, URLs, and \
+snippet-based claims.  A search snippet is still valid evidence.
 """
 
 
