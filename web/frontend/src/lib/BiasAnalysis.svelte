@@ -22,8 +22,13 @@
     return 'High Bias';
   }
 
-  let gaugeRotation = $derived((biasScore / 10) * 180 - 90);
   let color = $derived(scoreColor(biasScore));
+
+  // SVG arc gauge: semicircle from left to right
+  // Arc radius and circumference for the semicircle
+  const R = 80;
+  const CIRCUMFERENCE = Math.PI * R; // half circle
+  let dashOffset = $derived(CIRCUMFERENCE - (biasScore / 10) * CIRCUMFERENCE);
 </script>
 
 <div class="bias-analysis">
@@ -40,16 +45,34 @@
   <div class="bias-content">
     <!-- Gauge -->
     <div class="gauge-container">
-      <div class="gauge">
-        <div class="gauge-bg"></div>
-        <div class="gauge-fill" style="--rotation: {gaugeRotation}deg; --gauge-color: {color};"></div>
-        <div class="gauge-center">
-          <span class="gauge-value" style="color: {color};">{biasScore}</span>
-          <span class="gauge-label">{scoreLabel(biasScore)}</span>
-        </div>
-        <span class="gauge-min">0</span>
-        <span class="gauge-max">10</span>
-      </div>
+      <svg class="gauge-svg" viewBox="0 0 200 120" width="220" height="132">
+        <!-- Background arc -->
+        <path
+          d="M 20 100 A 80 80 0 0 1 180 100"
+          fill="none"
+          stroke="var(--bg-tertiary, #1a2235)"
+          stroke-width="14"
+          stroke-linecap="round"
+        />
+        <!-- Filled arc -->
+        <path
+          d="M 20 100 A 80 80 0 0 1 180 100"
+          fill="none"
+          stroke={color}
+          stroke-width="14"
+          stroke-linecap="round"
+          stroke-dasharray={CIRCUMFERENCE}
+          stroke-dashoffset={dashOffset}
+          style="transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;"
+        />
+        <!-- Score number -->
+        <text x="100" y="88" text-anchor="middle" fill={color} font-size="36" font-weight="800" font-family="var(--font-mono, monospace)">{biasScore}</text>
+        <!-- Label -->
+        <text x="100" y="108" text-anchor="middle" fill="var(--text-dim, #94a3b8)" font-size="10" font-weight="600" letter-spacing="0.05em">{scoreLabel(biasScore).toUpperCase()}</text>
+        <!-- Min/Max -->
+        <text x="18" y="115" text-anchor="middle" fill="var(--text-dim, #475569)" font-size="9" font-family="var(--font-mono, monospace)">0</text>
+        <text x="182" y="115" text-anchor="middle" fill="var(--text-dim, #475569)" font-size="9" font-family="var(--font-mono, monospace)">10</text>
+      </svg>
     </div>
 
     <!-- Detected Biases -->
@@ -148,69 +171,10 @@
     padding: 1rem 0;
   }
 
-  .gauge {
-    position: relative;
-    width: 200px;
-    height: 110px;
-    overflow: hidden;
-  }
-
-  .gauge-bg {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    border: 16px solid var(--bg-tertiary);
-    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
-  }
-
-  .gauge-fill {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    border: 16px solid transparent;
-    border-top-color: var(--gauge-color);
-    border-right-color: var(--gauge-color);
-    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
-    transform: rotate(var(--rotation));
-    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .gauge-center {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-  }
-
-  .gauge-value {
+  .gauge-svg {
     display: block;
-    font-size: 2.5rem;
-    font-weight: 800;
-    font-family: var(--font-mono);
-    line-height: 1;
+    filter: drop-shadow(0 0 8px rgba(110, 231, 183, 0.1));
   }
-
-  .gauge-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  .gauge-min, .gauge-max {
-    position: absolute;
-    bottom: 0;
-    font-size: 0.7rem;
-    color: var(--text-dim);
-    font-family: var(--font-mono);
-  }
-
-  .gauge-min { left: 12px; }
-  .gauge-max { right: 12px; }
 
   /* Subsections */
   .subsection h3 {
