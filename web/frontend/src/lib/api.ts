@@ -58,3 +58,69 @@ export function connectWebSocket(
 
   return ws;
 }
+
+// ============================================================
+// History API
+// ============================================================
+
+export interface HistoryItem {
+  id: string;
+  query: string;
+  status: string;
+  overall_grade: string;
+  created_at: string;
+  duration_seconds: number;
+  total_tokens: number;
+}
+
+export interface HistoryResponse {
+  results: HistoryItem[];
+  total: number;
+}
+
+export interface FullHistoryResult {
+  id: string;
+  query: string;
+  status: string;
+  result: any;
+  mermaid_diagrams: Record<string, string>;
+  created_at: string;
+  duration_seconds: number;
+  overall_grade: string;
+  total_tokens_in: number;
+  total_tokens_out: number;
+}
+
+/**
+ * Fetch paginated history of past research results.
+ */
+export async function fetchHistory(
+  limit: number = 20,
+  offset: number = 0,
+  search?: string,
+): Promise<HistoryResponse> {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+  if (search) params.set('search', search);
+
+  const response = await fetch(`${API_BASE}/api/history?${params}`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+/**
+ * Fetch a single full result by ID.
+ */
+export async function fetchResult(id: string): Promise<FullHistoryResult> {
+  const response = await fetch(`${API_BASE}/api/history/${id}`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+/**
+ * Delete a stored result by ID.
+ */
+export async function deleteResult(id: string): Promise<{ deleted: boolean }> {
+  const response = await fetch(`${API_BASE}/api/history/${id}`, { method: 'DELETE' });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}

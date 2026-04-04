@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { startResearch, connectWebSocket } from './lib/api';
+  import { startResearch, connectWebSocket, fetchResult, fetchHistory, type HistoryItem } from './lib/api';
   import { STAGES, type StageName, type StageStatus, type PipelineResult, type WSEvent } from './lib/types';
   import QueryInput from './lib/QueryInput.svelte';
   import PipelineProgress from './lib/PipelineProgress.svelte';
@@ -11,6 +11,7 @@
   import EvaluationScorecard from './lib/EvaluationScorecard.svelte';
   import MermaidDiagram from './lib/MermaidDiagram.svelte';
   import TokenUsage from './lib/TokenUsage.svelte';
+  import QueryHistory from './lib/QueryHistory.svelte';
 
   // App state
   type View = 'input' | 'results';
@@ -30,6 +31,9 @@
   // Final results
   let pipelineResult = $state<PipelineResult | null>(null);
   let mermaidDiagrams = $state<Record<string, string>>({});
+
+  // History count for top-bar badge
+  let historyCount = $state(0);
 
   // Active results tab
   type ResultTab = 'bias' | 'sources' | 'facts' | 'challenges' | 'synthesis' | 'evaluation' | 'diagrams';
@@ -138,6 +142,46 @@
     }
   }
 
+  async function handleHistorySelect(item: HistoryItem) {
+    try {
+      loading = true;
+      resetState();
+      const full = await fetchResult(item.id);
+      query = full.query;
+      view = 'results';
+
+      // Rehydrate stage data from the stored result
+      const result = full.result;
+      if (result && result.stages) {
+        for (const [key, stage] of Object.entries(result.stages) as [string, any][]) {
+          stageStatuses[key] = 'complete';
+          stageData[key] = stage.data || {};
+          stageContent[key] = stage.content || '';
+          stageTokens[key] = stage.tokens || { input: 0, output: 0 };
+        }
+      }
+
+      mermaidDiagrams = full.mermaid_diagrams || {};
+      pipelineResult = result as PipelineResult;
+      loading = false;
+    } catch {
+      errorMsg = 'Failed to load historical result.';
+      loading = false;
+    }
+  }
+
+  async function loadHistoryCount() {
+    try {
+      const res = await fetchHistory(1, 0);
+      historyCount = res.total;
+    } catch {
+      historyCount = 0;
+    }
+  }
+
+  // Load history count on init
+  loadHistoryCount();
+
   // Tab definitions for the results view
   const resultTabs: { key: ResultTab; label: string; icon: string; stage?: string }[] = [
     { key: 'bias', label: 'Bias', icon: '\u{1F6E1}\uFE0F', stage: 'bias_detection' },
@@ -167,14 +211,19 @@
           <span class="brand-subtitle">Cross-Lateral Evidence Review for Informational Clarity</span>
         </div>
       </div>
-      {#if view === 'results'}
-        <button class="back-btn" onclick={goBack}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          New Query
-        </button>
-      {/if}
+      <div class="top-bar-right">
+        {#if historyCount > 0}
+          <span class="history-badge badge badge-info">{historyCount} past</span>
+        {/if}
+        {#if view === 'results'}
+          <button class="back-btn" onclick={goBack}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            New Query
+          </button>
+        {/if}
+      </div>
     </div>
   </header>
 
@@ -182,6 +231,9 @@
   <main class="main-content">
     {#if view === 'input'}
       <QueryInput onsubmit={handleSubmit} {loading} />
+      <div class="history-section">
+        <QueryHistory onselect={handleHistorySelect} />
+      </div>
     {:else}
       <div class="results-layout">
         <!-- Query display -->
@@ -359,12 +411,28 @@
     color: var(--accent);
   }
 
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .history-badge {
+    font-size: 0.7rem;
+  }
+
   /* Main Content */
   .main-content {
     flex: 1;
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
+  }
+
+  .history-section {
+    max-width: 700px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.5rem;
   }
 
   /* Results Layout */

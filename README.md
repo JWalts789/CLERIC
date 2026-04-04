@@ -1,3 +1,5 @@
+![CI](https://github.com/JWalts789/CLERIC/actions/workflows/ci.yml/badge.svg)
+
 # C.L.E.R.I.C.
 
 **Cross-Lateral Evidence Review for Informational Clarity**
@@ -5,6 +7,24 @@
 C.L.E.R.I.C. decomposes research into specialized agent roles that check each other's work. Instead of trusting a single LLM response, it runs a six-stage pipeline: bias detection, multi-perspective research, independent fact-checking, adversarial challenge, balanced synthesis, and quantitative evaluation.
 
 Every claim is sourced. Every bias is flagged. Every weakness is challenged. The result is research you can audit.
+
+## Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/JWalts789/cleric.git
+cd cleric
+
+# 2. Install dependencies
+pip install -e .
+
+# 3. Add your API key
+cp .env.example .env
+# Edit .env and set ANTHROPIC_API_KEY
+
+# 4. Run a query
+cleric "What are the health effects of intermittent fasting?"
+```
 
 ## Architecture
 
@@ -72,7 +92,7 @@ Outputs: Report (.md) + Diagrams (.mermaid) + Raw Data (.json)
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/cleric.git
+git clone https://github.com/JWalts789/cleric.git
 cd cleric
 pip install -e .
 ```
@@ -128,6 +148,28 @@ diagrams = mermaid.generate_all(result)
 reporter = ReportGenerator(config.output_dir)
 report_path = reporter.generate(result)
 ```
+
+## Web UI
+
+Run the web interface with two terminals:
+
+**Terminal 1 — Backend:**
+
+```bash
+cd web/backend
+pip install -r requirements.txt
+python run.py
+```
+
+**Terminal 2 — Frontend:**
+
+```bash
+cd web/frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Unbiased by Design
 

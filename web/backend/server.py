@@ -14,7 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -27,6 +28,10 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 from cleric.config import Config  # noqa: E402
 from cleric.orchestrator import PipelineResult, ResearchPipeline  # noqa: E402
 from cleric.output.mermaid import MermaidGenerator  # noqa: E402
+
+from db import ResultStore  # noqa: E402
+
+result_store = ResultStore(str(_PROJECT_ROOT / "data" / "cleric.db"))
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -144,7 +149,8 @@ def _get_ws_loop(ws: WebSocket) -> Any:
 
 def _generate_mermaid_diagrams(result: PipelineResult) -> dict[str, str]:
     """Run MermaidGenerator and read back the generated files as strings."""
-    output_dir = _PROJECT_ROOT / "output" / "mermaid"
+    output_dir = _PROJECT_ROOT / "output" / "web_diagrams"
+    output_dir.mkdir(parents=True, exist_ok=True)
     generator = MermaidGenerator(str(output_dir))
 
     try:
@@ -210,6 +216,8 @@ def _run_pipeline(job_id: str, query: str) -> None:
 
         jobs[job_id]["status"] = "complete"
         jobs[job_id]["result"] = result_dict
+
+        result_store.save_result(job_id, query, result_dict, mermaid_diagrams)
 
         complete_event = {
             "type": "pipeline_complete",
@@ -282,6 +290,40 @@ async def get_job_status(job_id: str) -> JobStatus:
         result=job["result"],
         error=job["error"],
     )
+
+
+# ---------------------------------------------------------------------------
+# History endpoints
+# ---------------------------------------------------------------------------
+@app.get("/api/history")
+async def list_history(
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    search: str | None = Query(default=None),
+) -> JSONResponse:
+    """Return paginated list of past research results."""
+    if search:
+        results = result_store.search_results(search, limit=limit)
+        return JSONResponse({"results": results, "total": len(results)})
+
+    results, total = result_store.list_results(limit=limit, offset=offset)
+    return JSONResponse({"results": results, "total": total})
+
+
+@app.get("/api/history/{result_id}")
+async def get_history_result(result_id: str) -> JSONResponse:
+    """Return the full stored result for a past research job."""
+    row = result_store.get_result(result_id)
+    if row is None:
+        return JSONResponse({"error": "not found"}, status_code=404)
+    return JSONResponse(row)
+
+
+@app.delete("/api/history/{result_id}")
+async def delete_history_result(result_id: str) -> JSONResponse:
+    """Delete a stored result."""
+    deleted = result_store.delete_result(result_id)
+    return JSONResponse({"deleted": deleted})
 
 
 # ---------------------------------------------------------------------------
