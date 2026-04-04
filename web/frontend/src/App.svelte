@@ -292,7 +292,7 @@
               {#if activeResultTab === 'bias' && stageData.bias_detection}
                 <BiasAnalysis data={stageData.bias_detection} />
               {:else if activeResultTab === 'sources' && stageData.research}
-                <SourceCards data={stageData.research} />
+                <SourceCards data={stageData.research} content={stageContent.research || ''} />
               {:else if activeResultTab === 'facts' && stageData.fact_checking}
                 <FactCheckResults data={stageData.fact_checking} />
               {:else if activeResultTab === 'challenges' && stageData.devils_advocate}

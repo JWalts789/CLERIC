@@ -3,11 +3,13 @@
 
   interface Props {
     data: Record<string, any>;
+    content?: string;
   }
 
-  let { data }: Props = $props();
+  let { data, content = '' }: Props = $props();
 
   let sources: Source[] = $derived(data?.sources ?? []);
+  let hasRawContent = $derived(sources.length === 0 && content.length > 0);
   let perspectives = $derived([...new Set(sources.map(s => s.perspective).filter(Boolean))]);
   let activeFilter = $state<string | null>(null);
 
@@ -57,58 +59,77 @@
     </div>
   {/if}
 
-  <div class="sources-grid">
-    {#each filteredSources as source, i}
-      {@const coi = conflictBadge(source.conflict_of_interest)}
-      <div class="source-card card" style="animation-delay: {i * 50}ms;">
-        <div class="source-header">
-          <h4 class="source-title">
-            <a href={source.url} target="_blank" rel="noopener noreferrer">
-              {source.title || source.url}
+  {#if sources.length > 0}
+    <div class="sources-grid">
+      {#each filteredSources as source, i}
+        {@const coi = conflictBadge(source.conflict_of_interest)}
+        <div class="source-card card" style="animation-delay: {i * 50}ms;">
+          <div class="source-header">
+            <h4 class="source-title">
+              <a href={source.url} target="_blank" rel="noopener noreferrer">
+                {source.title || source.url}
+              </a>
+            </h4>
+            {#if coi.label}
+              <span class="badge {coi.class}" title={source.conflict_detail || ''}>
+                {coi.icon} {coi.label}
+              </span>
+            {/if}
+          </div>
+
+          {#if source.url}
+            <a class="source-url" href={source.url} target="_blank" rel="noopener noreferrer">
+              {source.url.length > 60 ? source.url.slice(0, 60) + '...' : source.url}
             </a>
-          </h4>
-          {#if coi.label}
-            <span class="badge {coi.class}" title={source.conflict_detail || ''}>
-              {coi.icon} {coi.label}
-            </span>
+          {/if}
+
+          {#if source.perspective}
+            <span class="perspective-badge badge badge-info">{source.perspective}</span>
+          {/if}
+
+          {#if source.claims?.length > 0}
+            <div class="claims-list">
+              <span class="claims-label">Key Claims:</span>
+              <ul>
+                {#each source.claims as claim}
+                  <li>{claim}</li>
+                {/each}
+              </ul>
+            </div>
+          {/if}
+
+          {#if source.credibility_notes}
+            <p class="credibility-notes">
+              <span class="notes-label">Credibility:</span> {source.credibility_notes}
+            </p>
+          {/if}
+
+          {#if source.conflict_detail}
+            <p class="conflict-detail">
+              <span class="notes-label">Conflict Detail:</span> {source.conflict_detail}
+            </p>
           {/if}
         </div>
-
-        {#if source.url}
-          <a class="source-url" href={source.url} target="_blank" rel="noopener noreferrer">
-            {source.url.length > 60 ? source.url.slice(0, 60) + '...' : source.url}
-          </a>
-        {/if}
-
-        {#if source.perspective}
-          <span class="perspective-badge badge badge-info">{source.perspective}</span>
-        {/if}
-
-        {#if source.claims?.length > 0}
-          <div class="claims-list">
-            <span class="claims-label">Key Claims:</span>
-            <ul>
-              {#each source.claims as claim}
-                <li>{claim}</li>
-              {/each}
-            </ul>
-          </div>
-        {/if}
-
-        {#if source.credibility_notes}
-          <p class="credibility-notes">
-            <span class="notes-label">Credibility:</span> {source.credibility_notes}
-          </p>
-        {/if}
-
-        {#if source.conflict_detail}
-          <p class="conflict-detail">
-            <span class="notes-label">Conflict Detail:</span> {source.conflict_detail}
-          </p>
-        {/if}
+      {/each}
+    </div>
+  {:else if hasRawContent}
+    <div class="raw-content-fallback card">
+      <p class="fallback-note">
+        Structured source data was not extracted. Showing raw researcher findings below.
+      </p>
+      <div class="raw-prose">
+        {#each content.split('\n') as line}
+          {#if line.trim()}
+            <p>{line}</p>
+          {/if}
+        {/each}
       </div>
-    {/each}
-  </div>
+    </div>
+  {:else}
+    <div class="empty-state">
+      <p>No sources were gathered for this query.</p>
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -260,6 +281,32 @@
     font-size: 0.85rem;
     color: var(--text-muted);
     margin: 0;
+  }
+
+  .raw-content-fallback {
+    padding: 1.25rem;
+  }
+
+  .fallback-note {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .raw-prose p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-dim);
   }
 
   @media (max-width: 768px) {

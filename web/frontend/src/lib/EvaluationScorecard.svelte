@@ -258,9 +258,11 @@
   .recommendations li {
     position: relative;
     padding-left: 20px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
     line-height: 1.6;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .recommendations li::before {
