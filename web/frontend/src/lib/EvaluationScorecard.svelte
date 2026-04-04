@@ -255,17 +255,36 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
   }
 
   .recommendations li {
     position: relative;
-    padding-left: 20px;
-    font-size: 0.85rem;
+    padding: 0.75rem 0.75rem 0.75rem 1.5rem;
+    font-size: 0.82rem;
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.7;
     word-break: break-word;
     overflow-wrap: break-word;
+    background: rgba(17, 24, 39, 0.4);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--color-evaluation, #fb923c);
+  }
+
+  .recommendations li strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+  }
+
+  .recommendations li em {
+    display: block;
+    margin-top: 6px;
+    color: var(--accent);
+    font-size: 0.78rem;
   }
 
   .recommendations li::before {

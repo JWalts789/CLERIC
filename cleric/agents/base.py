@@ -109,6 +109,7 @@ class BaseAgent:
             An ``AgentResult`` containing the agent's full output and metadata.
         """
         self._captured_data = None
+        self._accumulated_text: list[str] = []
         messages = self._build_initial_messages(prompt, context)
 
         tool_calls_made: list[dict] = []
@@ -120,6 +121,12 @@ class BaseAgent:
 
             total_input_tokens += response.usage.input_tokens
             total_output_tokens += response.usage.output_tokens
+
+            # Accumulate text from every response, not just the final one
+            for block in response.content:
+                text = getattr(block, "text", None)
+                if isinstance(text, str) and text.strip():
+                    self._accumulated_text.append(text)
 
             if response.stop_reason == "tool_use":
                 self._handle_tool_use(response, messages, tool_calls_made)
@@ -256,19 +263,25 @@ class BaseAgent:
         """Extract text content and structured data from the final response.
 
         Structured data comes from the ``submit_results`` tool call if the
-        agent has an ``output_schema``.  Falls back to parsing JSON code
-        blocks from the prose for backward compatibility.
+        agent has an ``output_schema``.  If the agent never called it, a
+        forced follow-up request asks for just the structured data.
+        Falls back to parsing JSON code blocks from the prose.
         """
-        text_parts: list[str] = []
-        for block in response.content:
-            if hasattr(block, "text"):
-                text_parts.append(block.text)
-
-        text_content = "".join(text_parts)
+        # Use accumulated text from all responses, not just the final one
+        text_content = "\n\n".join(self._accumulated_text)
 
         # Primary: use captured data from submit_results tool call
         if self._captured_data is not None:
             data = dict(self._captured_data)
+        elif self.output_schema is not None:
+            # Agent has a schema but never called submit_results — force it
+            logger.info(
+                "%s did not call submit_results — sending forced request",
+                self.name,
+            )
+            data, extra_tokens = self._force_submit_results(response, tool_calls_made)
+            total_input_tokens += extra_tokens.get("input", 0)
+            total_output_tokens += extra_tokens.get("output", 0)
         else:
             # Fallback: parse JSON blocks from prose (backward compatibility)
             data = self._parse_structured_data(text_content)
@@ -290,6 +303,66 @@ class BaseAgent:
             tool_calls_made=tool_calls_made,
             tokens_used={"input": total_input_tokens, "output": total_output_tokens},
         )
+
+    def _force_submit_results(
+        self, last_response, tool_calls_made: list[dict]
+    ) -> tuple[dict, dict]:
+        """Send a follow-up forcing the agent to call submit_results.
+
+        This handles the case where the agent completed its analysis
+        (used all tool calls, wrote prose) but ran out of tokens or
+        forgot to call submit_results.
+        """
+        # Build messages from the accumulated conversation
+        force_messages = [
+            {"role": "user", "content": (
+                "You completed your analysis but did not call the submit_results "
+                "tool. Please call submit_results now with your structured findings "
+                "based on everything you researched above. This is required."
+            )},
+        ]
+
+        kwargs: dict = {
+            "model": self.config.model,
+            "max_tokens": self.config.max_tokens,
+            "system": self.system_prompt + (
+                "\n\nIMPORTANT: You MUST call the submit_results tool now. "
+                "Summarize your findings from the research above into the "
+                "required structured format."
+            ),
+            "messages": force_messages,
+            "tools": [self._get_submit_results_schema()],
+            "tool_choice": {"type": "tool", "name": SUBMIT_RESULTS_TOOL},
+        }
+
+        logger.debug("%s sending forced submit_results request", self.name)
+        response = self.client.messages.create(**kwargs)
+
+        tokens = {
+            "input": response.usage.input_tokens,
+            "output": response.usage.output_tokens,
+        }
+
+        # Extract the submit_results call
+        data = {}
+        for block in response.content:
+            if block.type == "tool_use" and block.name == SUBMIT_RESULTS_TOOL:
+                data = dict(block.input)
+                tool_calls_made.append({
+                    "tool": SUBMIT_RESULTS_TOOL,
+                    "input": block.input,
+                    "result_preview": "Results recorded (forced).",
+                })
+                break
+
+        if data:
+            logger.info("%s forced submit_results succeeded: keys=%s", self.name, list(data.keys()))
+        else:
+            logger.warning("%s forced submit_results produced no data", self.name)
+            # Final fallback: parse JSON from accumulated text
+            data = self._parse_structured_data("\n\n".join(self._accumulated_text))
+
+        return data, tokens
 
     def _parse_structured_data(self, text: str) -> dict:
         """Extract JSON data blocks from agent response text (fallback).
