@@ -115,6 +115,28 @@ class HealthResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+import re as _re
+
+def _sanitize_text(text: str) -> str:
+    """Strip Unicode escape artifacts LLMs embed as literal text."""
+    text = _re.sub(r"\\?u20[0-9a-fA-F]{2}", "", text)
+    text = _re.sub(r"\\?u25[0-9a-fA-F]{2}", "", text)
+    text = _re.sub(r"^[\u2022\u2023\u25E6\u2043\u2219\u2013\u2014•–—]\s*", "", text)
+    text = _re.sub(r"\s{2,}", " ", text)
+    return text.strip()
+
+
+def _sanitize_data(obj):
+    """Recursively sanitize all strings in a data structure."""
+    if isinstance(obj, str):
+        return _sanitize_text(obj)
+    if isinstance(obj, dict):
+        return {k: _sanitize_data(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_data(item) for item in obj]
+    return obj
+
+
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -212,8 +234,8 @@ def _run_pipeline(
             event = {
                 "type": "stage_complete",
                 "stage": stage,
-                "data": agent_result.data,
-                "content": _truncate(agent_result.content),
+                "data": _sanitize_data(agent_result.data),
+                "content": _sanitize_text(_truncate(agent_result.content)),
                 "tokens": agent_result.tokens_used,
                 "tool_calls": len(agent_result.tool_calls_made),
                 "timestamp": _now_iso(),
@@ -246,7 +268,7 @@ def _run_pipeline(
 
         complete_event = {
             "type": "pipeline_complete",
-            "result": result_dict,
+            "result": _sanitize_data(result_dict),
             "mermaid_diagrams": mermaid_diagrams,
             "timestamp": _now_iso(),
         }
@@ -376,7 +398,7 @@ async def get_history_result(result_id: str) -> JSONResponse:
     row = result_store.get_result(result_id)
     if row is None:
         return JSONResponse({"error": "not found"}, status_code=404)
-    return JSONResponse(row)
+    return JSONResponse(_sanitize_data(row))
 
 
 @app.delete("/api/history/{result_id}")
