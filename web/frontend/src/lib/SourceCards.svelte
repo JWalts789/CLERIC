@@ -10,6 +10,14 @@
 
   let sources: Source[] = $derived(data?.sources ?? []);
   let hasRawContent = $derived(sources.length === 0 && content.length > 0);
+
+  /** Strip unicode bullet escapes and leading bullet chars from claim text */
+  function cleanClaim(text: string): string {
+    return text
+      .replace(/\\u2022\s?/gi, '')
+      .replace(/^[\u2022\u2023\u25E6\u2043\u2219•]\s*/g, '')
+      .trim();
+  }
   let perspectives = $derived([...new Set(sources.map(s => s.perspective).filter(Boolean))]);
   let activeFilter = $state<string | null>(null);
 
@@ -92,7 +100,7 @@
               <span class="claims-label">Key Claims:</span>
               <ul>
                 {#each source.claims as claim}
-                  <li>{claim}</li>
+                  <li>{cleanClaim(claim)}</li>
                 {/each}
               </ul>
             </div>
