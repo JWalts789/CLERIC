@@ -120,10 +120,9 @@ def _truncate(text: str, limit: int = _CONTENT_TRUNCATE_LIMIT) -> str:
 
 def _push_event(job_id: str, event: dict) -> None:
     """Append an event to the job's event log and broadcast to WebSocket clients."""
-    if job_id in jobs:
-        jobs[job_id]["events"].append(event)
-
     with _ws_lock:
+        if job_id in jobs:
+            jobs[job_id]["events"].append(event)
         sockets = list(_ws_connections.get(job_id, []))
 
     for ws in sockets:
@@ -137,8 +136,8 @@ def _push_event(job_id: str, event: dict) -> None:
             loop = _get_ws_loop(ws)
             if loop is not None and loop.is_running():
                 asyncio.run_coroutine_threadsafe(ws.send_json(event), loop)
-        except Exception:
-            logger.debug("Failed to push event to WebSocket for job %s", job_id)
+        except Exception as exc:
+            logger.warning("Failed to push event to WebSocket for job %s: %s", job_id, exc)
 
 
 def _get_ws_loop(ws: WebSocket) -> Any:

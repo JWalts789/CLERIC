@@ -34,7 +34,8 @@
   <div class="claims-list">
     {#each claims as claim, i}
       {@const status = statusConfig(claim.status || claim.verdict)}
-      {@const confidence = claim.confidence ?? claim.confidence_score ?? 0}
+      {@const rawConfidence = claim.confidence ?? claim.confidence_score ?? 0}
+      {@const confidence = typeof rawConfidence === 'number' ? rawConfidence : 0}
       {@const supporting = claim.supporting_sources ?? claim.supporting ?? 0}
       {@const contradicting = claim.contradicting_sources ?? claim.contradicting ?? 0}
       <div class="claim-row card" style="animation-delay: {i * 60}ms;">

@@ -38,6 +38,7 @@ class PipelineResult:
                 name: {
                     "agent": result.agent_name,
                     "role": result.role,
+                    "content": result.content,
                     "data": result.data,
                     "tool_calls": result.tool_calls_made,
                     "tokens": result.tokens_used,
@@ -107,7 +108,7 @@ class ResearchPipeline:
         if related_topics:
             for topic in related_topics[:3]:
                 summary = self.memory.get_topic_summary(topic)
-                prior_context += f"\nPrior research on '{topic}': {summary['entry_count']} entries, confidence range {summary.get('confidence_range', 'N/A')}\n"
+                prior_context += f"\nPrior research on '{topic}': {summary['entry_count']} entries, confidence {summary.get('confidence_min', 'N/A')}-{summary.get('confidence_max', 'N/A')}\n"
 
         # Stage 1: Bias Detection
         self._notify_start("bias_detection")

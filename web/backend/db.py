@@ -2,6 +2,7 @@
 
 import json
 import sqlite3
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -12,6 +13,7 @@ class ResultStore:
     def __init__(self, db_path: str = "data/cleric.db"):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self._write_lock = threading.Lock()
         self._init_db()
 
     def _init_db(self) -> None:
@@ -35,7 +37,9 @@ class ResultStore:
             )
 
     def _connect(self) -> sqlite3.Connection:
-        return sqlite3.connect(str(self.db_path))
+        conn = sqlite3.connect(str(self.db_path))
+        conn.execute("PRAGMA journal_mode=WAL")
+        return conn
 
     # ------------------------------------------------------------------
     # Write
@@ -58,27 +62,28 @@ class ResultStore:
             "timestamp", datetime.now(timezone.utc).isoformat()
         )
 
-        with self._connect() as conn:
-            conn.execute(
-                """
-                INSERT OR REPLACE INTO results
-                    (id, query, status, result_json, mermaid_json,
-                     created_at, duration_seconds, overall_grade,
-                     total_tokens_in, total_tokens_out)
-                VALUES (?, ?, 'complete', ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    job_id,
-                    query,
-                    json.dumps(result_dict),
-                    json.dumps(mermaid_dict),
-                    created_at,
-                    duration,
-                    overall_grade,
-                    tokens_in,
-                    tokens_out,
-                ),
-            )
+        with self._write_lock:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT OR REPLACE INTO results
+                        (id, query, status, result_json, mermaid_json,
+                         created_at, duration_seconds, overall_grade,
+                         total_tokens_in, total_tokens_out)
+                    VALUES (?, ?, 'complete', ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        job_id,
+                        query,
+                        json.dumps(result_dict),
+                        json.dumps(mermaid_dict),
+                        created_at,
+                        duration,
+                        overall_grade,
+                        tokens_in,
+                        tokens_out,
+                    ),
+                )
 
     # ------------------------------------------------------------------
     # Read

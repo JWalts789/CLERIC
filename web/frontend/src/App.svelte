@@ -201,6 +201,13 @@
   // Load history count on init
   loadHistoryCount();
 
+  // Cleanup WebSocket on component unmount
+  $effect(() => {
+    return () => {
+      if (ws) { ws.close(); ws = null; }
+    };
+  });
+
   // Tab definitions for the results view
   const resultTabs: { key: ResultTab; label: string; icon: string; stage?: string }[] = [
     { key: 'bias', label: 'Bias', icon: '\u{1F6E1}\uFE0F', stage: 'bias_detection' },
@@ -378,12 +385,13 @@
     border-radius: var(--radius-sm);
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-base);
   }
 
   .settings-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
+    box-shadow: 0 0 12px rgba(110, 231, 183, 0.1);
   }
 
   .app-layout {
@@ -397,9 +405,10 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-primary);
+    background: rgba(10, 14, 26, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(110, 231, 183, 0.1);
+    box-shadow: 0 1px 20px rgba(110, 231, 183, 0.05);
   }
 
   .top-bar-inner {
@@ -464,12 +473,13 @@
     font-size: 0.85rem;
     font-family: var(--font-sans);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-base);
   }
 
   .back-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
+    box-shadow: 0 0 12px rgba(110, 231, 183, 0.1);
   }
 
   .top-bar-right {
@@ -507,10 +517,12 @@
 
   .query-banner {
     padding: 1rem 1.25rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
-    border-radius: var(--radius-md);
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(110, 231, 183, 0.08);
+    border-radius: 16px;
     border-left: 4px solid var(--accent);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   }
 
   .query-banner-top {
@@ -590,7 +602,7 @@
   .result-tabs {
     display: flex;
     gap: 2px;
-    border-bottom: 1px solid var(--border-primary);
+    border-bottom: 1px solid rgba(110, 231, 183, 0.08);
     overflow-x: auto;
     padding-bottom: 0;
     margin-bottom: 1.5rem;
@@ -609,7 +621,7 @@
     font-weight: 600;
     font-family: var(--font-sans);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-base);
     white-space: nowrap;
     margin-bottom: -1px;
   }
@@ -635,7 +647,7 @@
   .tab-spinner {
     width: 12px;
     height: 12px;
-    border: 2px solid rgba(59, 130, 246, 0.3);
+    border: 2px solid rgba(110, 231, 183, 0.3);
     border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
@@ -669,7 +681,7 @@
   .loading-spinner-lg {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-primary);
+    border: 3px solid rgba(110, 231, 183, 0.15);
     border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;

@@ -33,3 +33,12 @@ htmlcov/
 memory_store/*.json
 output/*.md
 output/*.mermaid
+
+# Dependencies
+node_modules/
+
+# Database files
+*.db
+
+# Data directory
+data/

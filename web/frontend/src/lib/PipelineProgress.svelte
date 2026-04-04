@@ -79,6 +79,10 @@
     color: var(--text-dim);
     margin-bottom: 1rem;
     font-weight: 600;
+    background: linear-gradient(90deg, var(--text-dim) 0%, rgba(110, 231, 183, 0.4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .stages {
@@ -101,32 +105,34 @@
     align-items: center;
     gap: 8px;
     padding: 1rem 1.25rem;
-    background: var(--bg-secondary);
-    border: 1.5px solid var(--border-primary);
-    border-radius: var(--radius-md);
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(110, 231, 183, 0.06);
+    border-radius: 16px;
     min-width: 130px;
     transition: all var(--transition-base);
     position: relative;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
   }
 
   .stage-card.running {
     border-color: var(--stage-color);
-    box-shadow: 0 0 16px color-mix(in srgb, var(--stage-color) 30%, transparent);
-    animation: fadeInScale 300ms ease-out;
+    --pulse-color: color-mix(in srgb, var(--stage-color) 25%, transparent);
+    animation: gentlePulse 2.5s ease-in-out infinite;
   }
 
   .stage-card.complete {
-    border-color: color-mix(in srgb, var(--stage-color) 60%, transparent);
-    background: color-mix(in srgb, var(--stage-color) 5%, var(--bg-secondary));
+    border-color: color-mix(in srgb, var(--stage-color) 40%, transparent);
+    background: color-mix(in srgb, var(--stage-color) 4%, rgba(17, 24, 39, 0.7));
   }
 
   .stage-card.error {
     border-color: var(--color-error);
-    background: rgba(239, 68, 68, 0.05);
+    background: rgba(248, 113, 113, 0.05);
   }
 
   .stage-card.pending {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 
   .stage-indicator {
@@ -150,6 +156,7 @@
   .stage-card.complete .stage-indicator {
     background: var(--stage-color);
     color: white;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--stage-color) 30%, transparent);
   }
 
   .stage-card.error .stage-indicator {
@@ -206,14 +213,15 @@
   .connector {
     width: 32px;
     height: 2px;
-    background: var(--border-primary);
+    background: linear-gradient(90deg, rgba(110, 231, 183, 0.1), rgba(110, 231, 183, 0.05));
     flex-shrink: 0;
-    transition: background var(--transition-base);
+    transition: all var(--transition-base);
     position: relative;
+    border-radius: 1px;
   }
 
   .connector.active {
-    background: var(--accent);
+    background: linear-gradient(90deg, var(--accent), rgba(110, 231, 183, 0.4));
   }
 
   .connector::after {
@@ -225,7 +233,7 @@
     height: 0;
     border-top: 4px solid transparent;
     border-bottom: 4px solid transparent;
-    border-left: 6px solid var(--border-primary);
+    border-left: 6px solid rgba(110, 231, 183, 0.1);
     transition: border-left-color var(--transition-base);
   }
 
@@ -263,7 +271,7 @@
       bottom: -3px;
       border-left: 4px solid transparent;
       border-right: 4px solid transparent;
-      border-top: 6px solid var(--border-primary);
+      border-top: 6px solid rgba(110, 231, 183, 0.1);
       border-bottom: none;
     }
 

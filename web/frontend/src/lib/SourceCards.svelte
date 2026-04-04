@@ -221,6 +221,7 @@
     font-weight: 600;
     line-height: 1.3;
     margin: 0;
+    overflow-wrap: break-word;
   }
 
   .source-title a {

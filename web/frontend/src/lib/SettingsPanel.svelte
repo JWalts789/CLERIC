@@ -48,7 +48,7 @@
   });
 
   function handleSave() {
-    const settings: Settings = { model: selectedModel, maxResults };
+    const settings: Settings = { model: selectedModel, maxResults: Number(maxResults) };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     onsave(settings);
     onclose();

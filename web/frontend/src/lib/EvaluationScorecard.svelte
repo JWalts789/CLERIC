@@ -46,7 +46,7 @@
 
 <div class="evaluation-scorecard">
   <div class="section-header">
-    <span class="section-icon" style="background: rgba(221, 107, 32, 0.15); color: #dd6b20;">
+    <span class="section-icon" style="background: rgba(251, 146, 60, 0.12); color: #fb923c;">
       {'\u{1F4CA}'}
     </span>
     <div>
@@ -129,7 +129,7 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-sm);
+    border-radius: 12px;
     font-size: 1.2rem;
     flex-shrink: 0;
   }
@@ -166,9 +166,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--grade-color) 15%, var(--bg-secondary));
+    background: color-mix(in srgb, var(--grade-color) 10%, var(--bg-secondary));
     border: 3px solid var(--grade-color);
-    box-shadow: 0 0 24px color-mix(in srgb, var(--grade-color) 30%, transparent);
+    box-shadow: 0 0 32px color-mix(in srgb, var(--grade-color) 25%, transparent),
+                0 0 64px color-mix(in srgb, var(--grade-color) 10%, transparent);
     animation: fadeInScale 500ms ease-out;
   }
 
@@ -220,15 +221,17 @@
 
   .dim-bar-track {
     height: 8px;
-    background: var(--bg-tertiary);
-    border-radius: 4px;
+    background: rgba(26, 34, 53, 0.8);
+    border-radius: 100px;
     overflow: hidden;
   }
 
   .dim-bar-fill {
     height: 100%;
-    border-radius: 4px;
+    border-radius: 100px;
     transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.85;
+    box-shadow: 0 0 8px rgba(110, 231, 183, 0.1);
   }
 
   .dim-feedback {
@@ -269,6 +272,6 @@
     content: '\u25B8';
     position: absolute;
     left: 4px;
-    color: var(--color-evaluation, #dd6b20);
+    color: var(--color-evaluation, #fb923c);
   }
 </style>

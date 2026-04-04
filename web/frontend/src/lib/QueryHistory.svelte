@@ -75,6 +75,9 @@
 
   $effect(() => {
     load();
+    return () => {
+      if (searchTimeout) clearTimeout(searchTimeout);
+    };
   });
 </script>
 

@@ -14,12 +14,6 @@
     open = !open;
   }
 
-  function handleClickOutside(e: MouseEvent) {
-    if (menuRef && !menuRef.contains(e.target as Node)) {
-      open = false;
-    }
-  }
-
   async function downloadMarkdown() {
     open = false;
     try {
@@ -44,10 +38,14 @@
   }
 
   $effect(() => {
-    if (open) {
-      document.addEventListener('click', handleClickOutside, true);
-      return () => document.removeEventListener('click', handleClickOutside, true);
-    }
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef && !menuRef.contains(e.target as Node)) {
+        open = false;
+      }
+    };
+    document.addEventListener('click', handler, true);
+    return () => document.removeEventListener('click', handler, true);
   });
 </script>
 
