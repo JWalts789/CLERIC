@@ -198,7 +198,7 @@
 
   .sources-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
     gap: 1rem;
   }
 
@@ -207,6 +207,9 @@
     flex-direction: column;
     gap: 0.5rem;
     animation: fadeIn 300ms ease-out backwards;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .source-header {
@@ -265,10 +268,13 @@
   }
 
   .claims-list li {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
     padding-left: 16px;
     position: relative;
+    line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .claims-list li::before {
@@ -279,9 +285,12 @@
   }
 
   .credibility-notes, .conflict-detail {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
     margin: 0;
+    line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .raw-content-fallback {

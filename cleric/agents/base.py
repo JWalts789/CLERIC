@@ -311,25 +311,41 @@ class BaseAgent:
 
         This handles the case where the agent completed its analysis
         (used all tool calls, wrote prose) but ran out of tokens or
-        forgot to call submit_results.
+        forgot to call submit_results. We send the accumulated research
+        text as context so the model knows what to structure.
         """
-        # Build messages from the accumulated conversation
+        # Build context from accumulated text AND tool call results
+        accumulated = "\n\n".join(self._accumulated_text)
+
+        # Include tool call summaries as context
+        tool_summary_parts = []
+        for tc in tool_calls_made:
+            if tc["tool"] != SUBMIT_RESULTS_TOOL:
+                tool_summary_parts.append(
+                    f"[{tc['tool']}] Input: {json.dumps(tc['input'], default=str)[:150]}\n"
+                    f"  Result: {tc['result_preview']}"
+                )
+        tool_summary = "\n\n".join(tool_summary_parts[-15:])  # Last 15 tool calls
+
+        context_text = ""
+        if accumulated.strip():
+            context_text += f"Your analysis notes:\n{accumulated[:3000]}\n\n"
+        if tool_summary:
+            context_text += f"Tool call results from your research:\n{tool_summary[:4000]}\n\n"
+
         force_messages = [
             {"role": "user", "content": (
-                "You completed your analysis but did not call the submit_results "
-                "tool. Please call submit_results now with your structured findings "
-                "based on everything you researched above. This is required."
+                f"{context_text}"
+                "---\n\n"
+                "Based on the research above, call the submit_results tool now "
+                "with your structured findings. This is required."
             )},
         ]
 
         kwargs: dict = {
             "model": self.config.model,
             "max_tokens": self.config.max_tokens,
-            "system": self.system_prompt + (
-                "\n\nIMPORTANT: You MUST call the submit_results tool now. "
-                "Summarize your findings from the research above into the "
-                "required structured format."
-            ),
+            "system": self.system_prompt,
             "messages": force_messages,
             "tools": [self._get_submit_results_schema()],
             "tool_choice": {"type": "tool", "name": SUBMIT_RESULTS_TOOL},
