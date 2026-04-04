@@ -299,10 +299,34 @@ class BaseAgent:
             agent_name=self.name,
             role=self.role,
             content=text_content,
-            data=data,
+            data=self._sanitize_data(data),
             tool_calls_made=tool_calls_made,
             tokens_used={"input": total_input_tokens, "output": total_output_tokens},
         )
+
+    @staticmethod
+    def _sanitize_text(text: str) -> str:
+        """Remove Unicode escape artifacts that LLMs embed as literal text."""
+        # Match: \u2022, u2022, \u2013, u2013, etc.
+        text = re.sub(r"\\?u20[0-9a-fA-F]{2}", "", text)
+        # Also catch \u25xx range (geometric shapes used as bullets)
+        text = re.sub(r"\\?u25[0-9a-fA-F]{2}", "", text)
+        # Strip actual bullet/dash unicode chars at start of string
+        text = re.sub(r"^[\u2022\u2023\u25E6\u2043\u2219\u2013\u2014•–—]\s*", "", text)
+        # Collapse multiple spaces
+        text = re.sub(r"\s{2,}", " ", text)
+        return text.strip()
+
+    @classmethod
+    def _sanitize_data(cls, obj):
+        """Recursively sanitize all string values in a data structure."""
+        if isinstance(obj, str):
+            return cls._sanitize_text(obj)
+        if isinstance(obj, dict):
+            return {k: cls._sanitize_data(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [cls._sanitize_data(item) for item in obj]
+        return obj
 
     def _force_submit_results(
         self, last_response, tool_calls_made: list[dict]
