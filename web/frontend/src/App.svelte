@@ -229,33 +229,33 @@
 <div class="app-layout">
   <!-- Top Bar -->
   <header class="top-bar">
-    <div class="top-bar-inner">
-      <div class="brand" role="button" tabindex="0" onclick={goBack} onkeydown={(e) => e.key === 'Enter' && goBack()}>
-        <img src="/cleric-logo.png" alt="C.L.E.R.I.C." class="brand-logo-img" />
-        <div class="brand-text">
-          <span class="brand-name">C.L.E.R.I.C.</span>
-          <span class="brand-subtitle">Cross-Lateral Evidence Review for Informational Clarity</span>
-        </div>
-      </div>
-      <div class="top-bar-right">
-        {#if historyCount > 0}
-          <span class="history-badge badge badge-info">{historyCount} past</span>
-        {/if}
-        <button class="settings-btn" onclick={() => settingsOpen = true} aria-label="Open settings">
+    <div class="top-bar-controls top-bar-left">
+      {#if view === 'results'}
+        <button class="back-btn" onclick={goBack} aria-label="Go back to search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-            <circle cx="12" cy="12" r="3" />
+            <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
+          New Query
         </button>
-        {#if view === 'results'}
-          <button class="back-btn" onclick={goBack} aria-label="Go back to search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            New Query
-          </button>
-        {/if}
-      </div>
+      {/if}
+    </div>
+
+    <div class="brand-center" role="button" tabindex="0" onclick={goBack} onkeydown={(e) => e.key === 'Enter' && goBack()}>
+      <img src="/cleric-logo.png" alt="C.L.E.R.I.C." class="brand-logo-img" />
+      <span class="brand-name">C.L.E.R.I.C.</span>
+      <span class="brand-subtitle">Cross-Lateral Evidence Review for Informational Clarity</span>
+    </div>
+
+    <div class="top-bar-controls top-bar-right">
+      {#if historyCount > 0}
+        <span class="history-badge badge badge-info">{historyCount} past</span>
+      {/if}
+      <button class="settings-btn" onclick={() => settingsOpen = true} aria-label="Open settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </button>
     </div>
   </header>
 
@@ -405,60 +405,73 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10, 14, 26, 0.85);
+    background: #000000;
     backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(110, 231, 183, 0.1);
-    box-shadow: 0 1px 20px rgba(110, 231, 183, 0.05);
-  }
-
-  .top-bar-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    height: 56px;
+    border-bottom: 1px solid rgba(110, 231, 183, 0.15);
+    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.6), 0 1px 20px rgba(110, 231, 183, 0.06);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    padding: 0.6rem 1.5rem;
+    position: relative;
   }
 
-  .brand {
+  .top-bar-controls {
+    position: absolute;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .top-bar-left {
+    left: 1.5rem;
+  }
+
+  .top-bar-right {
+    right: 1.5rem;
+  }
+
+  .brand-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
     cursor: pointer;
     user-select: none;
   }
 
-  .brand:focus-visible {
+  .brand-center:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 4px;
     border-radius: 4px;
   }
 
   .brand-logo-img {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-sm);
+    width: 32px;
+    height: 32px;
     object-fit: contain;
-  }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
+    filter: drop-shadow(0 0 6px rgba(110, 231, 183, 0.3));
   }
 
   .brand-name {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: 0.04em;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
     font-family: var(--font-mono);
+    color: #ffffff;
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.8),
+      0 0 20px rgba(255, 255, 255, 0.4),
+      0 0 40px rgba(110, 231, 183, 0.5),
+      0 0 80px rgba(110, 231, 183, 0.25);
   }
 
   .brand-subtitle {
-    font-size: 0.65rem;
-    color: var(--text-dim);
-    letter-spacing: 0.01em;
+    font-size: 0.6rem;
+    color: rgba(110, 231, 183, 0.6);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
   }
 
   .back-btn {
@@ -695,6 +708,22 @@
   @media (max-width: 768px) {
     .brand-subtitle {
       display: none;
+    }
+
+    .brand-name {
+      font-size: 1.1rem;
+    }
+
+    .top-bar {
+      padding: 0.4rem 0.75rem;
+    }
+
+    .top-bar-left {
+      left: 0.75rem;
+    }
+
+    .top-bar-right {
+      right: 0.75rem;
     }
 
     .results-layout {
