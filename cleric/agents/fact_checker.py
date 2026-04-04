@@ -62,30 +62,8 @@ or the claim contradicts well-established facts.
 
 ## Output format
 
-Walk through your verification process claim by claim, then include a \
-JSON block:
-
-```json
-{
-  "verified_claims": [
-    {
-      "claim": "<the original claim text>",
-      "status": "VERIFIED | DISPUTED | UNVERIFIED | FALSE",
-      "confidence": <float 0.0-1.0>,
-      "supporting_sources": ["<url or description>"],
-      "contradicting_sources": ["<url or description>"],
-      "notes": "<any important caveats>"
-    }
-  ],
-  "verification_summary": {
-    "total_claims": <int>,
-    "verified": <int>,
-    "disputed": <int>,
-    "unverified": <int>,
-    "false": <int>
-  }
-}
-```
+Walk through your verification process claim by claim.  After your \
+analysis, call the ``submit_results`` tool with your structured findings.
 
 ## Rules
 - Never trust a single source, no matter how authoritative it appears.
@@ -101,7 +79,7 @@ claims.  Do not skip verification.
 - If fetch_page returns errors (403, timeouts, etc.), rely on search snippets \
 for verification evidence.  A search snippet that confirms or contradicts \
 a claim is still valid evidence.
-- You MUST include the JSON block with verified_claims even if verification \
+- You MUST call ``submit_results`` with verified_claims even if verification \
 was limited.  Mark claims as UNVERIFIED with appropriate confidence scores \
 rather than omitting them.
 """
@@ -114,7 +92,46 @@ class FactCheckerAgent(BaseAgent):
     tools registered.
     """
 
-    expected_json_keys = ["verified_claims", "verification_summary"]
+    output_schema: dict | None = {
+        "type": "object",
+        "properties": {
+            "verified_claims": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "claim": {"type": "string"},
+                        "status": {
+                            "type": "string",
+                            "enum": ["VERIFIED", "DISPUTED", "UNVERIFIED", "FALSE"],
+                        },
+                        "confidence": {"type": "number"},
+                        "supporting_sources": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        "contradicting_sources": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        "notes": {"type": "string"},
+                    },
+                    "required": ["claim", "status", "confidence"],
+                },
+            },
+            "verification_summary": {
+                "type": "object",
+                "properties": {
+                    "total_claims": {"type": "integer"},
+                    "verified": {"type": "integer"},
+                    "disputed": {"type": "integer"},
+                    "unverified": {"type": "integer"},
+                    "false": {"type": "integer"},
+                },
+            },
+        },
+        "required": ["verified_claims"],
+    }
 
     def __init__(self, config: Config, tools: ToolRegistry) -> None:
         super().__init__(

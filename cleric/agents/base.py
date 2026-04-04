@@ -3,6 +3,10 @@
 Every CLERIC agent inherits from BaseAgent, which owns the agentic loop:
 send a message, execute any tool calls Claude requests, feed results back,
 and repeat until a final text response is produced.
+
+Agents that define an ``output_schema`` class variable get a virtual
+``submit_results`` tool injected automatically.  Claude calls this tool
+to deliver guaranteed structured JSON alongside its prose analysis.
 """
 
 from __future__ import annotations
@@ -19,6 +23,8 @@ from cleric.tools.registry import ToolRegistry
 
 logger = logging.getLogger(__name__)
 
+SUBMIT_RESULTS_TOOL = "submit_results"
+
 
 @dataclass
 class AgentResult:
@@ -28,7 +34,8 @@ class AgentResult:
         agent_name: Human-readable name of the agent that produced this result.
         role: Short label for the agent's function (e.g. "bias_detector").
         content: Full text output from the agent.
-        data: Structured data extracted from JSON code blocks in the response.
+        data: Structured data extracted via the submit_results tool call,
+              with fallback to JSON code-block parsing.
         tool_calls_made: Chronological log of every tool invocation.
         tokens_used: Token consumption breakdown {"input": int, "output": int}.
     """
@@ -45,7 +52,7 @@ class BaseAgent:
     """Abstract base for all CLERIC agents.
 
     Subclasses typically only need to supply a system prompt and optionally
-    override ``_parse_structured_data`` for custom extraction logic.
+    define ``output_schema`` to get guaranteed structured output via tool use.
 
     Args:
         name: Display name shown in logs and results.
@@ -55,10 +62,11 @@ class BaseAgent:
         tools: Optional tool registry.  Agents that don't need tools pass None.
     """
 
-    # Subclasses can set this to a list of JSON keys that MUST appear
-    # in the structured data.  If extraction misses them, a follow-up
-    # prompt asks the model to emit just the JSON block.
-    expected_json_keys: list[str] = []
+    # Subclasses set this to a JSON Schema dict describing the structured
+    # data the agent must produce.  When set, a virtual ``submit_results``
+    # tool is automatically added to the API call, guaranteeing structured
+    # output without relying on fenced JSON blocks in prose.
+    output_schema: dict | None = None
 
     def __init__(
         self,
@@ -74,6 +82,8 @@ class BaseAgent:
         self.config = config
         self.tools = tools
         self.client = Anthropic(api_key=config.anthropic_api_key)
+        # Captured structured data from the submit_results virtual tool
+        self._captured_data: dict | None = None
 
     # ------------------------------------------------------------------
     # Public API
@@ -86,9 +96,10 @@ class BaseAgent:
 
         1. Build the initial message (with optional context from prior agents).
         2. Call Claude.
-        3. If Claude requests tool use, execute each tool and feed results back.
+        3. If Claude requests tool use, execute real tools and capture
+           ``submit_results`` calls as structured data.
         4. Repeat until Claude produces a final text response.
-        5. Parse any embedded JSON data blocks and return an ``AgentResult``.
+        5. Return an ``AgentResult`` with prose and structured data.
 
         Args:
             prompt: The task or question for this agent.
@@ -97,6 +108,7 @@ class BaseAgent:
         Returns:
             An ``AgentResult`` containing the agent's full output and metadata.
         """
+        self._captured_data = None
         messages = self._build_initial_messages(prompt, context)
 
         tool_calls_made: list[dict] = []
@@ -117,7 +129,6 @@ class BaseAgent:
                     tool_calls_made,
                     total_input_tokens,
                     total_output_tokens,
-                    messages=messages,
                 )
 
     # ------------------------------------------------------------------
@@ -138,6 +149,17 @@ class BaseAgent:
             )
         return [{"role": "user", "content": prompt}]
 
+    def _get_submit_results_schema(self) -> dict:
+        """Build the Claude API tool schema for the virtual submit_results tool."""
+        return {
+            "name": SUBMIT_RESULTS_TOOL,
+            "description": (
+                "Submit your structured findings. You MUST call this tool "
+                "after completing your analysis to deliver structured results."
+            ),
+            "input_schema": self.output_schema,
+        }
+
     def _call_api(self, messages: list[dict]):
         """Send a single request to the Claude API."""
         kwargs: dict = {
@@ -146,8 +168,15 @@ class BaseAgent:
             "system": self.system_prompt,
             "messages": messages,
         }
+
+        # Build the tools list: real tools (if any) + submit_results (if schema defined)
+        tool_schemas: list[dict] = []
         if self.tools:
-            kwargs["tools"] = self.tools.get_schemas()
+            tool_schemas.extend(self.tools.get_schemas())
+        if self.output_schema:
+            tool_schemas.append(self._get_submit_results_schema())
+        if tool_schemas:
+            kwargs["tools"] = tool_schemas
 
         logger.debug("%s calling Claude API (messages=%d)", self.name, len(messages))
         return self.client.messages.create(**kwargs)
@@ -158,7 +187,12 @@ class BaseAgent:
         messages: list[dict],
         tool_calls_made: list[dict],
     ) -> None:
-        """Execute every tool_use block in the response and append results."""
+        """Execute every tool_use block in the response and append results.
+
+        Real tools (web_search, fetch_page, etc.) are executed via the
+        ToolRegistry.  The virtual ``submit_results`` tool is intercepted
+        and its input captured as structured data.
+        """
         assistant_content = response.content
         messages.append({"role": "assistant", "content": assistant_content})
 
@@ -174,22 +208,41 @@ class BaseAgent:
                 json.dumps(block.input, default=str)[:200],
             )
 
-            result = self.tools.execute(block.name, block.input)
+            if block.name == SUBMIT_RESULTS_TOOL:
+                # Virtual tool: capture structured data, don't execute
+                self._captured_data = block.input
+                tool_results.append(
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": "Results recorded successfully.",
+                    }
+                )
+                tool_calls_made.append(
+                    {
+                        "tool": SUBMIT_RESULTS_TOOL,
+                        "input": block.input,
+                        "result_preview": "Results recorded successfully.",
+                    }
+                )
+            else:
+                # Real tool: execute via registry
+                result = self.tools.execute(block.name, block.input)
 
-            tool_calls_made.append(
-                {
-                    "tool": block.name,
-                    "input": block.input,
-                    "result_preview": str(result)[:200],
-                }
-            )
-            tool_results.append(
-                {
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": str(result),
-                }
-            )
+                tool_calls_made.append(
+                    {
+                        "tool": block.name,
+                        "input": block.input,
+                        "result_preview": str(result)[:200],
+                    }
+                )
+                tool_results.append(
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": str(result),
+                    }
+                )
 
         messages.append({"role": "user", "content": tool_results})
 
@@ -199,14 +252,12 @@ class BaseAgent:
         tool_calls_made: list[dict],
         total_input_tokens: int,
         total_output_tokens: int,
-        messages: list[dict] | None = None,
     ) -> AgentResult:
         """Extract text content and structured data from the final response.
 
-        If the agent defines ``expected_json_keys`` and the initial parse
-        misses them, a single follow-up prompt asks the model to emit just
-        the JSON block.  This handles models that write great prose but
-        skip the fenced JSON output.
+        Structured data comes from the ``submit_results`` tool call if the
+        agent has an ``output_schema``.  Falls back to parsing JSON code
+        blocks from the prose for backward compatibility.
         """
         text_parts: list[str] = []
         for block in response.content:
@@ -214,23 +265,13 @@ class BaseAgent:
                 text_parts.append(block.text)
 
         text_content = "".join(text_parts)
-        data = self._parse_structured_data(text_content)
 
-        # Retry: if expected keys are missing, ask for just the JSON
-        if self.expected_json_keys and messages is not None:
-            missing = [k for k in self.expected_json_keys if k not in data]
-            if missing:
-                logger.info(
-                    "%s missing expected JSON keys %s — requesting structured output",
-                    self.name, missing,
-                )
-                retry_data, retry_tokens = self._request_json_retry(
-                    text_content, messages
-                )
-                if retry_data:
-                    data.update(retry_data)
-                total_input_tokens += retry_tokens.get("input", 0)
-                total_output_tokens += retry_tokens.get("output", 0)
+        # Primary: use captured data from submit_results tool call
+        if self._captured_data is not None:
+            data = dict(self._captured_data)
+        else:
+            # Fallback: parse JSON blocks from prose (backward compatibility)
+            data = self._parse_structured_data(text_content)
 
         logger.info(
             "%s finished (tokens: in=%d out=%d, tools=%d, data_keys=%s)",
@@ -250,57 +291,8 @@ class BaseAgent:
             tokens_used={"input": total_input_tokens, "output": total_output_tokens},
         )
 
-    def _request_json_retry(
-        self, original_response: str, messages: list[dict]
-    ) -> tuple[dict, dict]:
-        """Send a follow-up asking the model to emit structured JSON.
-
-        Returns:
-            Tuple of (parsed_data, token_usage).
-        """
-        retry_prompt = (
-            "Your analysis above was excellent, but I need the structured "
-            "JSON output block as specified in your instructions. Please "
-            "output ONLY a single ```json fenced code block with the "
-            "required JSON object. No other text — just the JSON block."
-        )
-
-        retry_messages = messages + [
-            {"role": "assistant", "content": original_response},
-            {"role": "user", "content": retry_prompt},
-        ]
-
-        kwargs: dict = {
-            "model": self.config.model,
-            "max_tokens": self.config.max_tokens,
-            "system": self.system_prompt,
-            "messages": retry_messages,
-        }
-
-        logger.debug("%s sending JSON retry request", self.name)
-        retry_response = self.client.messages.create(**kwargs)
-
-        tokens = {
-            "input": retry_response.usage.input_tokens,
-            "output": retry_response.usage.output_tokens,
-        }
-
-        retry_text = ""
-        for block in retry_response.content:
-            if hasattr(block, "text"):
-                retry_text += block.text
-
-        data = self._parse_structured_data(retry_text)
-
-        if data:
-            logger.info("%s JSON retry succeeded: keys=%s", self.name, list(data.keys()))
-        else:
-            logger.warning("%s JSON retry also produced no structured data", self.name)
-
-        return data, tokens
-
     def _parse_structured_data(self, text: str) -> dict:
-        """Extract JSON data blocks from agent response text.
+        """Extract JSON data blocks from agent response text (fallback).
 
         Tries multiple strategies:
         1. Fenced ```json code blocks (standard)

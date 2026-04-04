@@ -52,25 +52,8 @@ perspective and why they hold it.
 
 ## Output format
 
-Write a complete, readable research report with clear sections. End with \
-a JSON block:
-
-```json
-{
-  "summary": "<2-3 sentence executive summary>",
-  "key_findings": [
-    {
-      "finding": "<statement>",
-      "category": "fact | analysis | opinion",
-      "confidence": "high | moderate | low",
-      "sources": ["<source references>"]
-    }
-  ],
-  "unresolved_questions": ["<questions the research could not answer>"],
-  "challenges_addressed": <number of Devil's Advocate challenges addressed>,
-  "confidence_overall": <float 0.0-1.0>
-}
-```
+Write a complete, readable research report with clear sections.  After \
+your report, call the ``submit_results`` tool with your structured findings.
 
 ## Rules
 - Every factual claim must cite its source.  No exceptions.
@@ -93,7 +76,34 @@ class SynthesizerAgent(BaseAgent):
     well-structured report.
     """
 
-    expected_json_keys = ["key_findings", "confidence_overall"]
+    output_schema: dict | None = {
+        "type": "object",
+        "properties": {
+            "summary": {"type": "string"},
+            "key_findings": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "finding": {"type": "string"},
+                        "category": {
+                            "type": "string",
+                            "enum": ["fact", "analysis", "opinion"],
+                        },
+                        "confidence": {
+                            "type": "string",
+                            "enum": ["high", "moderate", "low"],
+                        },
+                        "sources": {"type": "array", "items": {"type": "string"}},
+                    },
+                    "required": ["finding", "category", "confidence"],
+                },
+            },
+            "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+            "confidence_overall": {"type": "number"},
+        },
+        "required": ["key_findings", "confidence_overall"],
+    }
 
     def __init__(self, config: Config) -> None:
         super().__init__(

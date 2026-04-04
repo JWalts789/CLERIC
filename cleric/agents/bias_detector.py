@@ -46,20 +46,8 @@ communities, historical, international
 
 ## Output format
 
-Provide your analysis as normal prose, then include a single JSON block \
-with your structured findings:
-
-```json
-{
-  "bias_score": <int 0-10>,
-  "detected_biases": [
-    {"type": "<bias type>", "quote": "<exact text>", "explanation": "<why it's biased>"}
-  ],
-  "neutral_queries": ["<reformulated question 1>", "..."],
-  "required_perspectives": ["<perspective 1>", "..."],
-  "predetermined_conclusion": <true if the query asks to prove a conclusion, false otherwise>
-}
-```
+Provide your analysis as normal prose.  After your analysis, call the \
+``submit_results`` tool with your structured findings.
 
 ## Rules
 - Be thorough but not paranoid.  A straightforward factual question ("What is \
@@ -79,7 +67,27 @@ class BiasDetectorAgent(BaseAgent):
     and a list of perspectives that must be represented.
     """
 
-    expected_json_keys = ["bias_score", "neutral_queries", "required_perspectives"]
+    output_schema: dict | None = {
+        "type": "object",
+        "properties": {
+            "bias_score": {"type": "integer", "description": "Bias score 0-10"},
+            "detected_biases": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "type": {"type": "string"},
+                        "quote": {"type": "string"},
+                        "explanation": {"type": "string"},
+                    },
+                },
+            },
+            "neutral_queries": {"type": "array", "items": {"type": "string"}},
+            "required_perspectives": {"type": "array", "items": {"type": "string"}},
+            "predetermined_conclusion": {"type": "boolean"},
+        },
+        "required": ["bias_score", "neutral_queries", "required_perspectives"],
+    }
 
     def __init__(self, config: Config) -> None:
         super().__init__(

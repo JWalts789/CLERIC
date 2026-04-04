@@ -77,31 +77,8 @@ Compute a weighted average:
 
 ## Output format
 
-Present your evaluation dimension by dimension with justification, \
-then include a JSON block:
-
-```json
-{
-  "scores": {
-    "source_diversity": <float>,
-    "claim_verification_rate": <float>,
-    "bias_balance": <float>,
-    "challenge_resolution": <float>,
-    "source_quality": <float>,
-    "internal_consistency": <float>
-  },
-  "overall_score": <float>,
-  "grade": "<letter grade>",
-  "improvements": [
-    {
-      "area": "<which dimension>",
-      "issue": "<specific problem>",
-      "suggestion": "<concrete action to improve>"
-    }
-  ],
-  "commendations": ["<things the research did particularly well>"]
-}
-```
+Present your evaluation dimension by dimension with justification.  After \
+your evaluation, call the ``submit_results`` tool with your structured scores.
 
 ## Rules
 - Justify every score with specific evidence from the pipeline output.
@@ -122,7 +99,37 @@ class EvaluatorAgent(BaseAgent):
     actionable improvement recommendations.
     """
 
-    expected_json_keys = ["scores", "overall_score", "grade", "improvements"]
+    output_schema: dict | None = {
+        "type": "object",
+        "properties": {
+            "scores": {
+                "type": "object",
+                "properties": {
+                    "source_diversity": {"type": "number"},
+                    "claim_verification_rate": {"type": "number"},
+                    "bias_balance": {"type": "number"},
+                    "challenge_resolution": {"type": "number"},
+                    "source_quality": {"type": "number"},
+                    "internal_consistency": {"type": "number"},
+                },
+            },
+            "overall_score": {"type": "number"},
+            "grade": {"type": "string"},
+            "improvements": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "area": {"type": "string"},
+                        "issue": {"type": "string"},
+                        "suggestion": {"type": "string"},
+                    },
+                },
+            },
+            "commendations": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["scores", "overall_score", "grade"],
+    }
 
     def __init__(self, config: Config) -> None:
         super().__init__(

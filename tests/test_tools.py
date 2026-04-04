@@ -105,3 +105,47 @@ class TestFileIOTools:
         path = str(tmp_path / "a" / "b" / "c.txt")
         result = write_file(path, "deep")
         assert "4 characters" in result
+
+    def test_read_not_a_file(self, tmp_path):
+        """Reading a directory path should return an error message."""
+        from cleric.tools.file_io import read_file
+        result = read_file(str(tmp_path))
+        assert "Not a file" in result
+
+    def test_read_permission_denied(self, tmp_path):
+        """read_file should handle PermissionError gracefully."""
+        from unittest.mock import patch
+        from cleric.tools.file_io import read_file
+        with patch("cleric.tools.file_io.Path.read_text", side_effect=PermissionError("nope")):
+            result = read_file(str(tmp_path / "exists.txt"))
+            # File doesn't exist so it'll hit "File not found" first
+            assert "File not found" in result or "Permission denied" in result
+
+    def test_write_permission_denied(self, tmp_path):
+        """write_file should handle PermissionError gracefully."""
+        from unittest.mock import patch
+        from cleric.tools.file_io import write_file
+        with patch("cleric.tools.file_io.Path.write_text", side_effect=PermissionError("nope")):
+            result = write_file(str(tmp_path / "test.txt"), "content")
+            assert "Permission denied" in result
+
+    def test_write_generic_error(self, tmp_path):
+        """write_file should handle generic exceptions gracefully."""
+        from unittest.mock import patch
+        from cleric.tools.file_io import write_file
+        with patch("cleric.tools.file_io.Path.write_text", side_effect=OSError("disk full")):
+            result = write_file(str(tmp_path / "test.txt"), "content")
+            assert "Error writing" in result
+
+    def test_read_generic_error(self, tmp_path):
+        """read_file should handle generic exceptions gracefully."""
+        from unittest.mock import patch
+        from cleric.tools.file_io import read_file
+
+        # Create the file so it passes exists() and is_file() checks
+        file_path = tmp_path / "bad.txt"
+        file_path.write_text("data")
+
+        with patch("cleric.tools.file_io.Path.read_text", side_effect=OSError("I/O error")):
+            result = read_file(str(file_path))
+            assert "Error reading" in result

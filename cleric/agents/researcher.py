@@ -68,26 +68,8 @@ it may actually increase credibility.
 
 ## Output format
 
-Present your findings as organized prose, then include a JSON block:
-
-```json
-{
-  "sources": [
-    {
-      "url": "<url>",
-      "title": "<page title>",
-      "claims": ["<specific factual claim 1>", "..."],
-      "perspective": "<which viewpoint this source represents>",
-      "credibility_notes": "<brief assessment>",
-      "conflict_of_interest": "none | low | moderate | high",
-      "conflict_detail": "<who benefits, what's the stake — empty if none>"
-    }
-  ],
-  "perspectives_found": ["<perspective 1>", "..."],
-  "perspectives_missing": ["<any required perspective you could not find sources for>"],
-  "queries_searched": ["<actual search queries used>"]
-}
-```
+Present your findings as organized prose.  After your analysis, call the \
+``submit_results`` tool with your structured findings.
 
 ## Rules
 - Never fabricate sources.  If you cannot find evidence, say so.
@@ -97,13 +79,13 @@ coverage when both are available.
 - If a search returns low-quality results, try ONE alternative phrasing \
 before moving on.
 - Record every search query you use so the pipeline is auditable.
-- ALWAYS include the JSON block at the end — it is required for downstream agents.
+- ALWAYS call the ``submit_results`` tool — it is required for downstream agents.
 
 ## Handling fetch errors — CRITICAL
 - If a fetch_page call returns an HTTP error or "Access denied", use the \
 search snippet content as your source.  Note in credibility_notes that \
 full page content was unavailable and the source is based on a search snippet.
-- You MUST include the JSON block even if some or all fetches failed.  Use \
+- You MUST call ``submit_results`` even if some or all fetches failed.  Use \
 the information you gathered from search snippets.
 - Do NOT report 0 sources.  If you searched and found results, those search \
 results ARE your sources — include them with their titles, URLs, and \
@@ -118,7 +100,34 @@ class ResearcherAgent(BaseAgent):
     tools registered.
     """
 
-    expected_json_keys = ["sources"]
+    output_schema: dict | None = {
+        "type": "object",
+        "properties": {
+            "sources": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "url": {"type": "string"},
+                        "title": {"type": "string"},
+                        "claims": {"type": "array", "items": {"type": "string"}},
+                        "perspective": {"type": "string"},
+                        "credibility_notes": {"type": "string"},
+                        "conflict_of_interest": {
+                            "type": "string",
+                            "enum": ["none", "low", "moderate", "high"],
+                        },
+                        "conflict_detail": {"type": "string"},
+                    },
+                    "required": ["url", "title", "claims", "perspective"],
+                },
+            },
+            "perspectives_found": {"type": "array", "items": {"type": "string"}},
+            "perspectives_missing": {"type": "array", "items": {"type": "string"}},
+            "queries_searched": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["sources"],
+    }
 
     def __init__(self, config: Config, tools: ToolRegistry) -> None:
         super().__init__(

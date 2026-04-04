@@ -54,23 +54,8 @@ critic would make.
 
 ## Output format
 
-Present your critique as structured prose, then include a JSON block:
-
-```json
-{
-  "challenges": [
-    {
-      "challenge": "<specific critique>",
-      "severity": "high | medium | low",
-      "type": "<category: weak_evidence | logical_gap | missing_perspective | cherry_picking | unstated_assumption | other>",
-      "affects": "<which finding or claim this challenge targets>",
-      "recommendation": "<what the Synthesizer should do about it>"
-    }
-  ],
-  "strongest_counterargument": "<the single most compelling argument against the research's main conclusion>",
-  "overall_assessment": "<your honest assessment of how robust this research is>"
-}
-```
+Present your critique as structured prose.  After your analysis, call the \
+``submit_results`` tool with your structured findings.
 
 ## Rules
 - If you cannot find any problems, you are not trying hard enough.  \
@@ -94,7 +79,31 @@ class DevilsAdvocateAgent(BaseAgent):
     weaknesses that must be addressed in the final synthesis.
     """
 
-    expected_json_keys = ["challenges"]
+    output_schema: dict | None = {
+        "type": "object",
+        "properties": {
+            "challenges": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "challenge": {"type": "string"},
+                        "severity": {
+                            "type": "string",
+                            "enum": ["high", "medium", "low"],
+                        },
+                        "type": {"type": "string"},
+                        "affects": {"type": "string"},
+                        "recommendation": {"type": "string"},
+                    },
+                    "required": ["challenge", "severity", "type"],
+                },
+            },
+            "strongest_counterargument": {"type": "string"},
+            "overall_assessment": {"type": "string"},
+        },
+        "required": ["challenges"],
+    }
 
     def __init__(self, config: Config) -> None:
         super().__init__(

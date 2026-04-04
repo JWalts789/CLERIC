@@ -149,7 +149,7 @@ class TestBiasDetectorAgent:
     def test_system_prompt_is_set(self, mock_config):
         agent = BiasDetectorAgent(mock_config)
         assert "Bias Detector" in agent.system_prompt
-        assert "bias_score" in agent.system_prompt
+        assert "submit_results" in agent.system_prompt
 
     def test_repr(self, mock_config):
         agent = BiasDetectorAgent(mock_config)
