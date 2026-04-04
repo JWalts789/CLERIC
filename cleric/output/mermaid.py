@@ -372,7 +372,7 @@ flowchart TD
                 label = self._escape(str(imp)[:70])
             improvement_nodes += f'    I{i}["{label}"]\n'
 
-        overall = scores.get("overall_score", 0)
+        overall = eval_stage.data.get("overall_score", scores.get("overall_score", 0))
 
         return f"""---
 title: "Research Quality Evaluation — Grade: {grade} ({overall:.0%})"

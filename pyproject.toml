@@ -5,7 +5,7 @@ build-backend = "setuptools.backends._legacy:_Backend"
 [project]
 name = "cleric"
 version = "0.1.0"
-description = "C.L.E.R.I.C. — Cross-Lateral Evidence Review for Information Clarity"
+description = "C.L.E.R.I.C. — Cross-Lateral Evidence Review for Informational Clarity"
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"

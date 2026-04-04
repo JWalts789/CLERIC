@@ -161,10 +161,10 @@
   <header class="top-bar">
     <div class="top-bar-inner">
       <div class="brand" role="button" tabindex="0" onclick={goBack} onkeydown={(e) => e.key === 'Enter' && goBack()}>
-        <span class="brand-logo">C</span>
+        <img src="/cleric-logo.png" alt="C.L.E.R.I.C." class="brand-logo-img" />
         <div class="brand-text">
           <span class="brand-name">C.L.E.R.I.C.</span>
-          <span class="brand-subtitle">Cross-Lateral Evidence Review for Information Clarity</span>
+          <span class="brand-subtitle">Cross-Lateral Evidence Review for Informational Clarity</span>
         </div>
       </div>
       {#if view === 'results'}
@@ -312,18 +312,11 @@
     border-radius: 4px;
   }
 
-  .brand-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    background: var(--accent);
+  .brand-logo-img {
+    width: 38px;
+    height: 38px;
     border-radius: var(--radius-sm);
-    color: white;
-    font-family: var(--font-mono);
-    font-weight: 800;
-    font-size: 1.1rem;
+    object-fit: contain;
   }
 
   .brand-text {

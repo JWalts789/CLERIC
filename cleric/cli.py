@@ -56,7 +56,7 @@ def main():
 
     if not args.query:
         console.print(Panel(
-            "[bold]C.L.E.R.I.C.[/bold] — Cross-Lateral Evidence Review for Information Clarity\n\n"
+            "[bold]C.L.E.R.I.C.[/bold] — Cross-Lateral Evidence Review for Informational Clarity\n\n"
             "Usage: cleric \"Your research question here\"\n\n"
             "Options:\n"
             "  --json         Output raw JSON\n"
