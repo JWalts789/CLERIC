@@ -33,15 +33,7 @@
 <div class="query-container">
   <div class="hero-section">
     <div class="logo-mark">
-      <div class="logo-ring">
-        {#each STAGES as stage, i}
-          <span
-            class="ring-dot"
-            style="--dot-color: {stage.color}; --dot-angle: {i * 60}deg;"
-          ></span>
-        {/each}
-        <span class="ring-center">C</span>
-      </div>
+      <img src="/cleric-logo.png" alt="C.L.E.R.I.C." class="hero-logo" />
     </div>
     <h1 class="hero-title">What would you like to investigate?</h1>
     <p class="hero-subtitle">
@@ -135,35 +127,13 @@
     margin-bottom: 1.5rem;
   }
 
-  .logo-ring {
-    position: relative;
-    width: 72px;
-    height: 72px;
+  .hero-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
     margin: 0 auto;
-    border: 2px solid var(--border-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .ring-dot {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--dot-color);
-    top: 50%;
-    left: 50%;
-    transform: rotate(var(--dot-angle)) translateY(-34px) translate(-50%, -50%);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--dot-color) 50%, transparent);
-  }
-
-  .ring-center {
-    font-family: var(--font-mono);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--accent);
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.3));
   }
 
   .hero-title {
