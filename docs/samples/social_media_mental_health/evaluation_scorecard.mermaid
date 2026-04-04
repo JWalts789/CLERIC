@@ -1,0 +1,31 @@
+---
+title: "Research Quality Evaluation — Grade: C+ (0%)"
+---
+flowchart TD
+    GRADE["Overall Grade: C+<br/>Score: 0%"]
+
+    subgraph SCORES["Dimension Scores"]
+    SOURCE DIVERSITY["Source Diversity<br/>███████░░░ 72%"]
+    style SOURCE DIVERSITY fill:#d69e2e,color:#fff
+    CLAIM VERIFICATION RATE["Claim Verification Rate<br/>█████░░░░░ 58%"]
+    style CLAIM VERIFICATION RATE fill:#e53e3e,color:#fff
+    BIAS BALANCE["Bias Balance<br/>██████░░░░ 68%"]
+    style BIAS BALANCE fill:#d69e2e,color:#fff
+    CHALLENGE RESOLUTION["Challenge Resolution<br/>███████░░░ 75%"]
+    style CHALLENGE RESOLUTION fill:#d69e2e,color:#fff
+    SOURCE QUALITY["Source Quality<br/>███████░░░ 71%"]
+    style SOURCE QUALITY fill:#d69e2e,color:#fff
+    INTERNAL CONSISTENCY["Internal Consistency<br/>████████░░ 81%"]
+    style INTERNAL CONSISTENCY fill:#38a169,color:#fff
+    end
+
+    subgraph IMPROVEMENTS["Recommended Improvements"]
+    I0["{'area': 'claim_verification_rate', 'issue': 'World Happiness Report 2"]
+    I1["{'area': 'source_diversity', 'issue': 'Industry/platform-defender pers"]
+    I2["{'area': 'bias_balance', 'issue': 'Harms discussion (~2000 words) rece"]
+    I3["{'area': 'challenge_resolution', 'issue': 'Devil's Advocate raised ind"]
+    I4["{'area': 'source_quality', 'issue': 'Afterbabel.com cited as authorita"]
+    end
+
+    GRADE --> SCORES
+    SCORES --> IMPROVEMENTS

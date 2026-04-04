@@ -1,0 +1,33 @@
+---
+title: "Bias Analysis — Score: 4/10 (Moderate Bias)"
+---
+flowchart TD
+    OQ["Original Query<br/><i>Is social media harmful to teenagers' mental health?</i>"]
+
+    subgraph BIASES["Detected Biases"]
+        B0["{'type': 'False dichotomy / Binary framing', 'quote': 'Is so"]
+        B1["{'type': 'Implicit universality', 'quote': 'teenagers', 'exp"]
+        B2["{'type': 'Undefined scope', 'quote': 'harmful', 'explanation"]
+    end
+
+    subgraph NEUTRAL["Neutral Reformulations"]
+        NQ0["What evidence exists regarding associations between social media use and mental "]
+        NQ1["What are the documented positive and negative mental health correlates of social"]
+        NQ2["Does social media use causally impact teenage mental health, or do confounding f"]
+        NQ3["Which subgroups of teenagers appear most vulnerable to negative mental health ef"]
+    end
+
+    subgraph PERSPECTIVES["Required Perspectives"]
+        P0["Developmental psychology / neuroscience research o"]
+        P1["Epidemiological studies on mental health trends in"]
+        P2["Social media company research and internal finding"]
+        P3["Clinical psychology / psychiatry perspectives on d"]
+        P4["Teenagers themselves—their self-reported experienc"]
+        P5["Disability advocates and neurodivergent communitie"]
+    end
+
+    OQ --> BIASES
+    BIASES --> NEUTRAL
+    NEUTRAL --> PERSPECTIVES
+
+    style OQ fill:#d69e2e,color:#fff

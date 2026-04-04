@@ -1,0 +1,52 @@
+---
+title: "C.L.E.R.I.C. Research Pipeline"
+---
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#2d3748", "primaryTextColor": "#fff", "primaryBorderColor": "#4a5568", "lineColor": "#718096", "secondaryColor": "#4a5568", "tertiaryColor": "#2d3748"}}}%%
+flowchart TD
+    Q["🔍 User Query<br/><i>Is social media harmful to teenagers' mental health?</i>"]
+
+    subgraph PIPELINE["Research Pipeline"]
+        direction TB
+        BD["🛡️ Bias Detector<br/>Bias Score: 4/10"]
+        R["🔎 Researcher<br/>Web Search + Fetch"]
+        FC["✅ Fact Checker<br/>Independent Verification"]
+        DA["😈 Devil's Advocate<br/>Adversarial Challenge"]
+        S["📝 Synthesizer<br/>Balanced Report"]
+        E["📊 Evaluator<br/>Grade: C+ (?)"]
+    end
+
+    Q --> BD
+    BD -->|"Neutral queries<br/>+ required perspectives"| R
+    R -->|"Sources + claims"| FC
+    FC -->|"Verified claims"| DA
+    DA -->|"Challenges"| S
+    S -->|"Final report"| E
+
+    subgraph TOOLS["Tool Layer"]
+        WS["🌐 Web Search"]
+        WF["📄 Web Fetch"]
+    end
+
+    R -.->|uses| WS
+    R -.->|uses| WF
+    FC -.->|uses| WS
+    FC -.->|uses| WF
+
+    subgraph MEMORY["Memory Layer"]
+        MS["💾 Persistent Store<br/>Prior Research Context"]
+    end
+
+    Q -.->|"check prior research"| MS
+    E -.->|"store findings"| MS
+
+    subgraph METRICS["Run Metrics"]
+        TK["Tokens: 130,803 total"]
+        DUR["Duration: 326.1s"]
+    end
+
+    style BD fill:#e53e3e,color:#fff
+    style R fill:#3182ce,color:#fff
+    style FC fill:#38a169,color:#fff
+    style DA fill:#d69e2e,color:#fff
+    style S fill:#805ad5,color:#fff
+    style E fill:#dd6b20,color:#fff

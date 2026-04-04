@@ -1,0 +1,834 @@
+{
+  "query": "Is social media harmful to teenagers' mental health?",
+  "timestamp": "2026-04-03T18:44:50.183126+00:00",
+  "stages": {
+    "bias_detection": {
+      "agent": "Bias Detector",
+      "role": "bias_detector",
+      "data": {
+        "bias_score": 4,
+        "detected_biases": [
+          {
+            "type": "False dichotomy / Binary framing",
+            "quote": "Is social media harmful to teenagers' mental health?",
+            "explanation": "Frames the question as yes/no when evidence suggests complex, variable effects depending on context, platform, usage patterns, and individual factors. Obscures nuance."
+          },
+          {
+            "type": "Implicit universality",
+            "quote": "teenagers",
+            "explanation": "Treats a heterogeneous group (ages 13-19) as monolithic; effects differ significantly by age, demographics, and vulnerability factors."
+          },
+          {
+            "type": "Undefined scope",
+            "quote": "harmful",
+            "explanation": "Does not distinguish between trivial harms (mild anxiety) and severe ones (suicidality); does not specify which mental health outcomes are the focus."
+          }
+        ],
+        "neutral_queries": [
+          "What evidence exists regarding associations between social media use and mental health outcomes in teenagers, and how do these associations vary by age, platform, and usage pattern?",
+          "What are the documented positive and negative mental health correlates of social media use in adolescents?",
+          "Does social media use causally impact teenage mental health, or do confounding factors (pre-existing conditions, socioeconomic status, personality traits) explain observed associations?",
+          "Which subgroups of teenagers appear most vulnerable to negative mental health effects from social media, and which appear most resilient or benefit?",
+          "How do harms from social media compare in magnitude and prevalence to other known risk factors for teenage mental health problems?"
+        ],
+        "required_perspectives": [
+          "Developmental psychology / neuroscience research on adolescent brain development and social needs",
+          "Epidemiological studies on mental health trends in teenagers (correlation with social media adoption timelines)",
+          "Social media company research and internal findings (often withheld from public)",
+          "Clinical psychology / psychiatry perspectives on diagnosed mental health conditions in adolescents",
+          "Teenagers themselves\u2014their self-reported experiences, both positive and negative",
+          "Disability advocates and neurodivergent communities (for whom social media may be uniquely enabling)",
+          "Digital literacy and media studies scholars",
+          "Public health researchers on population-level trends",
+          "Longitudinal cohort studies with rigorous causality inference methods",
+          "Voices historically marginalized in tech criticism (non-Western populations, lower-income communities)"
+        ],
+        "predetermined_conclusion": false
+      },
+      "tool_calls": [],
+      "tokens": {
+        "input": 642,
+        "output": 1047
+      }
+    },
+    "research": {
+      "agent": "Researcher",
+      "role": "researcher",
+      "data": {
+        "sources": [
+          {
+            "url": "https://www.worldhappiness.report/ed/2026/social-media-is-harming-adolescents-at-a-scale-large-enough-to-cause-changes-at-the-population-level/",
+            "title": "World Happiness Report 2026: Social media is harming adolescents at a scale large enough to cause changes at the population level",
+            "claims": [
+              "Seven lines of evidence show harms: youth surveys, parent/clinician surveys, corporate documents, cross-sectional studies, longitudinal studies, social media reduction experiments, natural experiments",
+              "Overwhelming evidence of severe and widespread direct harms (sextortion, cyberbullying)",
+              "Compelling evidence of troubling indirect harms (depression, anxiety)",
+              "Rapid adoption of always-available social media in early 2010s was a substantial contributor to population-level mental illness increases in mid-2010s",
+              "Among teenage girls: 20% say it hurts confidence, 25% say it harms mental health, 50% negatively affected sleep",
+              "Harms are diverse and vast in scope, justifying population-level harm assessment"
+            ],
+            "perspective": "Public health researchers on population-level trends; Longitudinal cohort studies with rigorous causality inference methods",
+            "credibility_notes": "Peer-reviewed synthesis of literature. Represents consensus among many mental health and developmental researchers. Published 2026."
+          },
+          {
+            "url": "https://metasinternalresearch.org/",
+            "title": "Meta's Internal Research: What The Company Learned About Social Media and Harms to Mental Health from Dozens of Internal Studies",
+            "claims": [
+              "Meta has conducted 35+ internal studies on social media harms to young people",
+              "Studies reveal extensive evidence of product harms through whistleblower documents and legal discovery",
+              "Internal research documents harms from Instagram particularly",
+              "Company obtained evidence of harms and knowledge of impacts on young users"
+            ],
+            "perspective": "Social media company research and internal findings (often withheld from public)",
+            "credibility_notes": "Primary source compilation from company documents via whistleblowers (Francis Haugen) and legal discovery. Compiled by credible academic institution (NYU Stern)."
+          },
+          {
+            "url": "https://about.fb.com/news/2026/01/metas-record-protecting-teens-supporting-parents/",
+            "title": "Meta: Beyond the Headlines\u2014Meta's Record of Protecting Teens and Supporting Parents",
+            "claims": [
+              "Social media does not have a population-level impact on adolescent mental health (citing National Academies of Sciences)",
+              "Company disputes causality claims about platform harms"
+            ],
+            "perspective": "Social media company research and internal findings; Industry response to harms claims",
+            "credibility_notes": "Company statement. Represents industry perspective. References National Academies of Sciences but this claim is disputed by many researchers."
+          },
+          {
+            "url": "https://www.aap.org/en/patient-care/media-and-children/center-of-excellence-on-social-media-and-youth-mental-health/",
+            "title": "American Academy of Pediatrics: Supporting Neurodivergent Youth in Navigating Technology and Social Media",
+            "claims": [
+              "Social media use can have unique benefits for individuals with autism spectrum disorder (ASD)",
+              "Benefits include better friendship quality and greater social security for neurodivergent youth",
+              "Considerations needed for neurodivergent youth's digital media use differ from neurotypical populations"
+            ],
+            "perspective": "Disability advocates and neurodivergent communities (for whom social media may be uniquely enabling); Clinical psychology / psychiatry perspectives",
+            "credibility_notes": "Published by American Academy of Pediatrics, major medical authority. Acknowledges complexity and differential impacts by neurodivergence."
+          },
+          {
+            "url": "https://childmind.org/article/screens-and-neurodivergent-kids/",
+            "title": "Child Mind Institute: Neurodivergent Kids and Screen Time",
+            "claims": [
+              "Screens can be beneficial to neurodivergent kids, helping them connect with other kids",
+              "Screen use can calm anxiety in neurodivergent youth",
+              "Digital media increases learning opportunities for neurodivergent children"
+            ],
+            "perspective": "Disability advocates and neurodivergent communities; Clinical psychology / psychiatry perspectives",
+            "credibility_notes": "Published by Child Mind Institute, reputable clinical psychology organization. Evidence-based."
+          },
+          {
+            "url": "https://www.apa.org/monitor/2023/09/protecting-teens-on-social-media",
+            "title": "American Psychological Association: Social media brings benefits and risks to teens",
+            "claims": [
+              "Research exposes both harms and positive outcomes of social media",
+              "Risk of mental health problems in adolescents from social media use",
+              "Increased risk for both perpetrators and victims of cyberhate"
+            ],
+            "perspective": "Clinical psychology / psychiatry perspectives; Developmental psychology / neuroscience research",
+            "credibility_notes": "Published by American Psychological Association, major professional body. Emphasizes balanced view of evidence."
+          },
+          {
+            "url": "https://reason.com/2023/03/29/the-statistically-flawed-evidence-that-social-media-is-causing-the-teen-mental-health-crisis/",
+            "title": "Reason Magazine: The Statistically Flawed Evidence That Social Media Is Causing the Teen Mental Health Crisis",
+            "claims": [
+              "Much research on social media and teen mental health is statistically flawed",
+              "Genetic factors (polygenic risk scores) account for all observed associations in some studies",
+              "Selection effects and confounding explain observed correlations"
+            ],
+            "perspective": "Critique of causality claims; Emphasis on confounding factors and genetic predisposition",
+            "credibility_notes": "Journalistic critique citing research. Represents skeptical perspective on causality."
+          },
+          {
+            "url": "https://ascd.org/el/articles/lets-stop-shaming-teens-about-social-media-use",
+            "title": "ASCD: Let's Stop Shaming Teens About Social Media Use",
+            "claims": [
+              "Twin study of 8,000+ pairs showed genetic factors account for observed associations",
+              "Selection effects explain some correlations",
+              "Need for nuanced approach rather than categorical condemnation"
+            ],
+            "perspective": "Alternative perspective emphasizing genetic and confounding factors; Developmental psychology",
+            "credibility_notes": "Educational organization perspective. Cites behavioral genetics research."
+          },
+          {
+            "url": "https://blogs.worldbank.org/en/investinpeople/Are-smartphones-a-problem-for-teen-mental-health-in-developing-countries",
+            "title": "World Bank: Are smartphones a problem for teen mental health in developing countries?",
+            "claims": [
+              "Social media has had at least some impact on mental health, particularly for teenage girls",
+              "Developing countries show patterns similar to developed nations",
+              "Gender differences in vulnerability exist globally"
+            ],
+            "perspective": "Voices historically marginalized in tech criticism (non-Western populations); Epidemiological perspective",
+            "credibility_notes": "World Bank analysis of global evidence. Represents developing world perspective. Notes gender disparities."
+          },
+          {
+            "url": "https://www.pewresearch.org/internet/2025/04/22/teens-social-media-and-mental-health/",
+            "title": "Pew Research Center: Teens, Social Media and Mental Health",
+            "claims": [
+              "Most popular platforms among teens: YouTube (95%), TikTok (67%), Instagram (62%), Snapchat (59%)",
+              "46% of teens say it would be difficult or impossible to give up social media",
+              "Each platform affects mental health differently",
+              "Among parents concerned about teen mental health, 44% say social media has the biggest negative impact"
+            ],
+            "perspective": "Teenagers themselves\u2014their self-reported experiences; Epidemiological data on platform adoption",
+            "credibility_notes": "Large national survey. Direct evidence from adolescent self-report. Credible source on prevalence."
+          },
+          {
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11753871/",
+            "title": "TikTok and teen mental health: an analysis of user-generated content",
+            "claims": [
+              "User-generated content analysis of TikTok videos tagged #teenmentalhealth",
+              "Platform-specific content analysis reveals what adolescents discuss about mental health"
+            ],
+            "perspective": "Teenagers themselves\u2014their self-reported experiences and content creation; Digital literacy perspective",
+            "credibility_notes": "Peer-reviewed content analysis. Direct evidence of teen-generated discourse on platforms."
+          },
+          {
+            "url": "https://www.sciencedirect.com/science/article/pii/S0190740922002961",
+            "title": "Feeling mentally unwell is the 'new normal': A qualitative study on adolescents' perceptions of mental health",
+            "claims": [
+              "Adolescents perceive mental health problems as normalized and prevalent",
+              "Qualitative evidence on teen perceptions of mental health prevalence"
+            ],
+            "perspective": "Teenagers themselves\u2014their self-reported experiences, both positive and negative",
+            "credibility_notes": "Peer-reviewed qualitative study of adolescent perspectives. Direct voice of teens."
+          },
+          {
+            "url": "https://mental.jmir.org/2021/9/e26176",
+            "title": "Seeking Help From Trusted Adults in Response to Peers' Social Media Posts: Qualitative Study With Latinx Adolescents",
+            "claims": [
+              "Latinx adolescents seek trusted adult guidance in response to peer social media content",
+              "Coping mechanisms and social support patterns among marginalized youth"
+            ],
+            "perspective": "Voices historically marginalized in tech criticism (non-Western populations, lower-income communities); Teenagers themselves",
+            "credibility_notes": "Peer-reviewed qualitative research with specific attention to Latinx population. Addresses health equity."
+          },
+          {
+            "url": "https://uncasf.org/social-media-smart-phones-and-the-adolescent-brain/",
+            "title": "Arts and Sciences Forum: Social Media, Smart Phones and the Adolescent Brain",
+            "claims": [
+              "Social media usage has long-standing and important consequences on adolescent brain development"
+            ],
+            "perspective": "Developmental psychology / neuroscience research on adolescent brain development and social needs",
+            "credibility_notes": "University research forum. Foundational for understanding developmental mechanisms."
+          },
+          {
+            "url": "https://neurosciencenews.com/social-media-brain-development-22159/",
+            "title": "Neuroscience News: Habitual Checking of Social Media May Impact Young People's Brain Development",
+            "claims": [
+              "Habitual checking of social media impacts adolescent neural development",
+              "Long-term associations between social media use, adolescent neural development, and psychological adjustment require further research"
+            ],
+            "perspective": "Developmental psychology / neuroscience research on adolescent brain development and social needs",
+            "credibility_notes": "Peer-reviewed neuroscience research. Evidence of neurobiological mechanisms."
+          },
+          {
+            "url": "https://www.psychologytoday.com/ca/blog/promoting-empathy-with-your-teen/202411/the-impact-of-social-media-on-teen-mental-health",
+            "title": "Psychology Today: The Impact of Social Media on Teen Mental Health",
+            "claims": [
+              "Frequent social media use among teenagers is associated with increased risk of depression and anxiety symptoms",
+              "Recent studies highlight concerning trends"
+            ],
+            "perspective": "Clinical psychology / psychiatry perspectives; Epidemiological studies on mental health trends",
+            "credibility_notes": "Published in Psychology Today. Synthesizes recent clinical research findings."
+          }
+        ],
+        "perspectives_found": [
+          "Developmental psychology / neuroscience research on adolescent brain development and social needs",
+          "Epidemiological studies on mental health trends in teenagers (correlation with social media adoption timelines)",
+          "Social media company research and internal findings (often withheld from public)",
+          "Clinical psychology / psychiatry perspectives on diagnosed mental health conditions in adolescents",
+          "Teenagers themselves\u2014their self-reported experiences, both positive and negative",
+          "Disability advocates and neurodivergent communities (for whom social media may be uniquely enabling)",
+          "Public health researchers on population-level trends",
+          "Longitudinal cohort studies with rigorous causality inference methods",
+          "Voices historically marginalized in tech criticism (non-Western populations, lower-income communities)"
+        ],
+        "perspectives_missing": [
+          "Digital literacy and media studies scholars (limited direct sources found, though implied in some references)"
+        ],
+        "queries_searched": [
+          "social media mental health teenagers longitudinal study causality confounding factors",
+          "adolescent brain development social needs social media neuroscience research",
+          "social media positive effects teenagers mental health resilience benefits",
+          "neurodivergent autism ADHD teenagers social media benefits community access",
+          "mental health trends teenagers epidemiology Instagram TikTok adoption timeline",
+          "social media harms teenagers risk factors comparative magnitude depression anxiety",
+          "Meta Facebook internal research social media teenage mental health documents",
+          "global developing countries teenagers social media mental health low-income communities",
+          "teenagers own voices social media mental health qualitative interview study"
+        ]
+      },
+      "tool_calls": [
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "social media mental health teenagers longitudinal study causality confounding factors",
+            "max_results": 5
+          },
+          "result_preview": "[1] Social Media is a Major Cause of the Mental Illness Epidemic in\n    URL: https://www.afterbabel.com/p/social-media-mental-illness-epidemic\n    Nearly all of the research\u2013\u2013the \u201chundreds ofstudies\u201d "
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "adolescent brain development social needs social media neuroscience research",
+            "max_results": 5
+          },
+          "result_preview": "[1] Social Media, Smart Phones and the Adolescent Brain - Arts and\n    URL: https://uncasf.org/social-media-smart-phones-and-the-adolescent-brain/\n    ... the forefront ofresearchinto howsocialmediaus"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "social media positive effects teenagers mental health resilience benefits",
+            "max_results": 5
+          },
+          "result_preview": "[1] HowSocialMediaAffectsYourTeen\u2019sMentalHealth... | Yale Medicine\n    URL: https://www.yalemedicine.org/news/social-media-teen-mental-health-a-parents-guide\n    Socialmediause andteens: Background,be"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "neurodivergent autism ADHD teenagers social media benefits community access",
+            "max_results": 5
+          },
+          "result_preview": "[1] Supporting Neurodivergent Youth in Navigating Technology and Social ...\n    URL: https://www.aap.org/en/patient-care/media-and-children/center-of-excellence-on-social-media-and-youth-mental-health"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "mental health trends teenagers epidemiology Instagram TikTok adoption timeline",
+            "max_results": 5
+          },
+          "result_preview": "[1] TikTok and teen mental health: an analysis of user-generated ...\n    URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC11753871/\n    In this study, we: (a) conducted a directed content analysis of the"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "social media harms teenagers risk factors comparative magnitude depression anxiety",
+            "max_results": 5
+          },
+          "result_preview": "[1] Social media is harming adolescents at a scale large enough to cause ...\n    URL: https://www.worldhappiness.report/ed/2026/social-media-is-harming-adolescents-at-a-scale-large-enough-to-cause-cha"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11487866/",
+            "max_length": 2000
+          },
+          "result_preview": "HTTP error fetching https://pmc.ncbi.nlm.nih.gov/articles/PMC11487866/: 403"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "Meta Facebook internal research social media teenage mental health documents",
+            "max_results": 5
+          },
+          "result_preview": "[1] Jury finds Meta and Google negligent in social media harms trial - NPR\n    URL: https://www.npr.org/2026/03/25/nx-s1-5746125/meta-youtube-social-media-trial-verdict\n    Mar 25, 2026\u00b7A California j"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "global developing countries teenagers social media mental health low-income communities",
+            "max_results": 5
+          },
+          "result_preview": "[1] Balancing the benefits and risks of social media on adolescent mental ...\n    URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC12351798/\n    Aug 13, 2025\u00b7A 2021 Pew Research Centre report found that "
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "teenagers own voices social media mental health qualitative interview study",
+            "max_results": 5
+          },
+          "result_preview": "[1] Social Media\u2013Driven Routes to Positive Mental Health Among Youth\n    URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC8933808/\n    This qualitative study explored the lived experiences of youth to un"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12351798/",
+            "max_length": 2000
+          },
+          "result_preview": "HTTP error fetching https://pmc.ncbi.nlm.nih.gov/articles/PMC12351798/: 403"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://www.worldhappiness.report/ed/2026/social-media-is-harming-adolescents-at-a-scale-large-enough-to-cause-changes-at-the-population-level/",
+            "max_length": 2000
+          },
+          "result_preview": "Key insights\nIs social media use\nreasonably safe for children and adolescents? We call this the \u201cproduct safety question\u201d, and we present seven lines of evidence showing that the answer is no.\nThe evi"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8933808/",
+            "max_length": 2000
+          },
+          "result_preview": "HTTP error fetching https://pmc.ncbi.nlm.nih.gov/articles/PMC8933808/: 403"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://metasinternalresearch.org/",
+            "max_length": 2000
+          },
+          "result_preview": "Meta\u2019s Internal Research\nWhat The Company Learned About Social Media and Harms to Mental Health from Dozens of Internal Studies\nCompiled by Bennett Sippel, Nikolaus Greb, Emma Park, Zach Rausch, and J"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://www.apa.org/monitor/2023/09/protecting-teens-on-social-media",
+            "max_length": 2000
+          },
+          "result_preview": ""
+        }
+      ],
+      "tokens": {
+        "input": 46607,
+        "output": 8698
+      }
+    },
+    "fact_checking": {
+      "agent": "Fact Checker",
+      "role": "fact_checker",
+      "data": {
+        "verified_claims": [
+          {
+            "claim": "World Happiness Report 2026 synthesizes seven lines of evidence (youth surveys, parent/clinician surveys, corporate documents, cross-sectional studies, longitudinal studies, social media reduction experiments, natural experiments) showing harms",
+            "status": "VERIFIED",
+            "confidence": 0.85,
+            "supporting_sources": [
+              "https://www.worldhappiness.report/ed/2026/social-media-is-harming-adolescents-at-a-scale-large-enough-to-cause-changes-at-the-population-level/",
+              "https://www.gallup.com/analytics/349487/world-happiness-report.aspx"
+            ],
+            "contradicting_sources": [],
+            "notes": "Report confirmed to exist and contain multi-methodological analysis. Specific percentages and exact claim language not independently verified due to paywall access."
+          },
+          {
+            "claim": "Adolescent mental health decline in UK, US, Canada, Australia began in mid-2010s, coinciding with social media adoption and algorithmic changes",
+            "status": "DISPUTED",
+            "confidence": 0.6,
+            "supporting_sources": [
+              "https://www.worldhappiness.report/ed/2026/social-media-is-harming-adolescents-at-a-scale-large-enough-to-cause-changes-at-the-population-level/",
+              "https://www.ox.ac.uk/news/2026-03-19-world-happiness-report-2026-shows-complex-global-picture-social-media-and-happiness"
+            ],
+            "contradicting_sources": [
+              "https://www.afterbabel.com/p/social-media-mental-illness-epidemic (noting researchers question strength of correlations)",
+              "https://www.afterbabel.com/p/why-some-researchers-think-im-wrong (arguing causality is more complex than timing suggests)"
+            ],
+            "notes": "Timing correlation is documented, but researchers like Haidt acknowledge internal debate about whether the correlation is as strong or direct as claimed. This is the crux of the causality debate."
+          },
+          {
+            "claim": "Meta has conducted 35+ internal studies on social media harms to young people, with documented evidence of Instagram harms particularly for girls",
+            "status": "VERIFIED",
+            "confidence": 0.8,
+            "supporting_sources": [
+              "https://www.theatlantic.com/technology/archive/2024/07/instagram-teen-well-being-studies/679048/ (Frances Haugen whistleblower materials)",
+              "https://petapixel.com/2023/10/24/33-us-states-sue-meta-for-harming-mental-health-of-young-people/ (legal discovery documents)"
+            ],
+            "contradicting_sources": [],
+            "notes": "Internal research existence confirmed; specific number '35+' not independently verified. Meta shutdown of research noted by sources, suggesting company knew about harms but discontinued publication."
+          },
+          {
+            "claim": "National Academies of Sciences (2024) found that 'social media does not have a population-level impact on adolescent mental health'",
+            "status": "DISPUTED",
+            "confidence": 0.4,
+            "supporting_sources": [
+              "https://journalisticlearning.org/social-media-and-teen-mental-health/ (citing the report: 'research did not support the conclusion that social media causes changes in adolescent mental health at the population level')"
+            ],
+            "contradicting_sources": [
+              "https://academic.oup.com/pnasnexus/article/3/2/pgae037/7614669 (actual report abstract states 'The answer turns out to be nowhere near as simple as we might hope')"
+            ],
+            "notes": "CRITICAL MISCHARACTERIZATION: The National Academies report actually says causality is not definitively established at population level, NOT that harms don't exist. The Researcher's framing inverts the nuance\u2014the report acknowledges the complexity and simultaneous presence of harms and confounders."
+          },
+          {
+            "claim": "Twin study analysis found genetic factors (measured via polygenic risk scores) account for all observed associations in some samples",
+            "status": "UNVERIFIED",
+            "confidence": 0.3,
+            "supporting_sources": [],
+            "contradicting_sources": [],
+            "notes": "No independent source found confirming the specific twin study or the claim that genetic factors explain all associations. Recent twin studies on screen time and impulsivity exist (2024-2025) but do not directly address this claim."
+          }
+        ],
+        "verification_summary": {
+          "total_claims": 5,
+          "verified": 2,
+          "disputed": 2,
+          "unverified": 1,
+          "false": 0
+        }
+      },
+      "tool_calls": [
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "World Happiness Report 2026 social media adolescent mental health",
+            "max_results": 5
+          },
+          "result_preview": "[1] Social media is harming adolescents at a scale large enough ...\n    URL: https://www.worldhappiness.report/ed/2026/social-media-is-harming-adolescents-at-a-scale-large-enough-to-cause-changes-at-t"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "adolescent mental health decline 2010s social media timing correlation",
+            "max_results": 5
+          },
+          "result_preview": "[1] Social Media is a Major Cause of the Mental Illness Epidemic in\n    URL: https://www.afterbabel.com/p/social-media-mental-illness-epidemic\n    When we look across thousands of girls, we might find"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "Meta internal research social media harms teenagers Instagram",
+            "max_results": 5
+          },
+          "result_preview": "[1] A New Development in the Debate About Instagram and Teens - The\n    URL: https://www.theatlantic.com/technology/archive/2024/07/instagram-teen-well-being-studies/679048/\n    ... Frances Haugen sho"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "National Academies Sciences social media adolescent mental health population level",
+            "max_results": 5
+          },
+          "result_preview": "[1] Read \"Social Media and Adolescent Health\" at NAP.edu\n    URL: https://www.nationalacademies.org/read/27396\n    Suggested Citation: \"Front Matter.\"NationalAcademiesofSciences, Engineering, and Medi"
+        },
+        {
+          "tool": "fetch_page",
+          "input": {
+            "url": "https://academic.oup.com/pnasnexus/article/3/2/pgae037/7614669",
+            "max_length": 2000
+          },
+          "result_preview": "HTTP error fetching https://academic.oup.com/pnasnexus/article/3/2/pgae037/7614669: 403"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "twin study genetic factors social media mental health confounding Haidt",
+            "max_results": 5
+          },
+          "result_preview": "[1] A Genetically Informed Study of Digital screen time, Video game play, and ...\n    URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC12176375/\n    Aug 13, 2024\u00b7This study examined the association betwe"
+        },
+        {
+          "tool": "web_search",
+          "input": {
+            "query": "\"National Academies\" social media adolescent mental health \"no population-level impact\"",
+            "max_results": 5
+          },
+          "result_preview": "[1] Debates about social media and kids' mental health are\n    URL: https://technosapiens.substack.com/p/debates-about-social-media-and-kids\n    ...NationalAcademiesof Science report evaluated over 30"
+        }
+      ],
+      "tokens": {
+        "input": 22317,
+        "output": 2981
+      }
+    },
+    "devils_advocate": {
+      "agent": "Devil's Advocate",
+      "role": "devils_advocate",
+      "data": {
+        "challenges": [
+          {
+            "challenge": "World Happiness Report 2026 is treated as canonical authority, but the fact-checker admits inability to verify specific claims, AND internal WHR contributors (afterbabel.com/Haidt network) report disagreement about causality within the report itself. Research cherry-picks the 'seven lines of evidence' framing while ignoring internal contestation.",
+            "severity": "high",
+            "type": "cherry_picking",
+            "affects": "Primary evidence foundation; credibility of causality claims",
+            "recommendation": "Synthesizer should: (1) Obtain and review the full WHR 2026 report to verify whether contributors actually agree or whether this is a contested synthesis; (2) Report the internal disagreement prominently rather than burying it; (3) Reduce reliance on WHR as a single authoritative source"
+          },
+          {
+            "challenge": "Correlation/causation problem is explicitly acknowledged ('causality remains incompletely resolved') but then the research functionally treats timing alignment as quasi-causal evidence. This is the ecological fallacy: mental health decline + social media adoption overlap temporally, but multiple confounders changed simultaneously (post-2008 recession, austerity, opioid epidemic, climate anxiety, school funding cuts, reduced outdoor play).",
+            "severity": "high",
+            "type": "logical_gap",
+            "affects": "Central causal claim that social media causes mental health decline",
+            "recommendation": "Synthesizer should: (1) Enumerate alternative explanations for timing correlation; (2) Explicitly state which confounders are controlled for in cited studies; (3) Model sensitivity analysis: how large would confounding need to be to explain observed correlation; (4) Present timing correlation as suggestive but not dispositive"
+          },
+          {
+            "challenge": "Twin study finding ('genetic factors account for all observed associations in some samples') is presented as minor confounding but represents the most damaging counterargument\u2014if genetics explain all variance, observed correlation is selection bias, not causation. Research provides no specifics: which twin studies? Sample sizes? How recent?",
+            "severity": "high",
+            "type": "weak_evidence",
+            "affects": "Causality claims; premise that social media inherently harms",
+            "recommendation": "Synthesizer should: (1) Identify and cite specific twin studies referenced; (2) Evaluate methodological rigor and recency of each; (3) If credible recent twin studies show genetic confounding >80%, prominently report as alternative explanation; (4) Compare effect size of selection bias vs. direct causation explanations"
+          },
+          {
+            "challenge": "National Academies of Sciences conclusion ('social media does not have a population-level impact on adolescent mental health') is buried parenthetically as 'contested by many researchers' rather than treated as primary evidence. National Academies is the premier US scientific authority. Finding deserves top-level engagement, not dismissal.",
+            "severity": "high",
+            "type": "cherry_picking",
+            "affects": "Core conclusion that social media is harmful to teenagers",
+            "recommendation": "Synthesizer should: (1) Elevate National Academies finding to primary evidence section; (2) Specify which researchers contest it and cite their basis; (3) Explain why contested research should override formal National Academies assessment; (4) Consider whether default position should shift to 'insufficient evidence of population-level harm'"
+          },
+          {
+            "challenge": "Meta's internal research is cited as evidence of harms (body image, Instagram effects) but Meta is a conflicted source with incentives to exaggerate harm (regulatory defense) or downplay it. Research does not distinguish between Meta findings independently verified by academics vs. those solely from Meta's interpretation.",
+            "severity": "high",
+            "type": "weak_evidence",
+            "affects": "Platform-specific claims (Instagram, TikTok); body image effects; overall evidence quality",
+            "recommendation": "Synthesizer should: (1) Cross-reference each Meta internal finding against independent academic replication studies; (2) Separate Meta research from independently conducted peer-reviewed studies; (3) Flag Meta's own National Academies claim (no population-level impact) as potential contradiction to other Meta internal findings; (4) Weight independent verification more heavily"
+          },
+          {
+            "challenge": "Positive correlates (community, neurodivergent support, resource access) are listed as bullet points with zero quantification. No data on: percentage of teens experiencing benefits, magnitude compared to harms, overlap between teens experiencing both benefits and harms, whether benefits are concentrated in subgroups while harms are distributed broadly.",
+            "severity": "medium",
+            "type": "missing_perspective",
+            "affects": "Apparent balance of evidence; whether harms outweigh benefits; policy implications",
+            "recommendation": "Synthesizer should: (1) Quantify prevalence of benefit experiences vs. harm experiences; (2) Model distribution: are 10% of teens getting major benefits while 40% experience harms, or vice versa; (3) Compare effect sizes quantitatively; (4) Examine whether subgroup analysis shows different benefit/harm ratios"
+          },
+          {
+            "challenge": "Dosage evidence ('more use correlates with worse outcomes') asserted without citation to specific studies or dose-response curves. No inflection points specified: is 30 min/day harmful? 2 hours? Without quantification, claim becomes unfalsifiable.",
+            "severity": "medium",
+            "type": "weak_evidence",
+            "affects": "Mechanistic understanding of harm; policy recommendations on safe usage limits",
+            "recommendation": "Synthesizer should: (1) Locate and cite specific dose-response studies with quantified relationships; (2) Plot relationship graphically; (3) Identify whether linear or threshold-based; (4) Examine whether correlation persists after controlling for neuroticism (predicts both checking behavior and poor outcomes)"
+          },
+          {
+            "challenge": "Age and developmental stage treated as homogeneous 'teenagers' category. A 13-year-old and 17-year-old have neurologically distinct brains. Evidence suggests effects vary by age (girls 14-16 show different patterns than older teens) but variations reported, not integrated into developmental model.",
+            "severity": "medium",
+            "type": "missing_perspective",
+            "affects": "Applicability of findings; age-specific policy implications; mechanistic understanding",
+            "recommendation": "Synthesizer should: (1) Reorganize findings by age bands and developmental stage; (2) Report whether effects are linear or non-linear across adolescence; (3) Examine differential effects by pubertal timing; (4) Specify which age groups experience which outcomes"
+          },
+          {
+            "challenge": "Cyberbullying and sextortion are listed as negative correlates of 'social media use' but are category error\u2014these are harms perpetrated via social media, not inherent effects of the medium. A teen avoiding social media entirely could still be bullied. This conflates 'misuse of platform' with 'platform effect,' inflating apparent scope of harm.",
+            "severity": "medium",
+            "type": "logical_gap",
+            "affects": "Scope of 'social media harms'; distinction between medium effects and user behavior effects",
+            "recommendation": "Synthesizer should: (1) Separate platform-inherent effects (comparison, algorithm-driven content) from user-perpetrated harms (bullying, sextortion); (2) Present bullying/sextortion as serious but distinct category; (3) Clarify which outcomes are attributable to medium vs. user conduct"
+          },
+          {
+            "challenge": "Evidence temporal specificity unclear. Much evidence is from 2016-2021 studies. Platforms have evolved substantially: Instagram hid like counts, TikTok modified algorithm, usage patterns shifted post-COVID, new platforms emerged. Research doesn't clarify whether findings apply to social media in 2015, 2024, or both.",
+            "severity": "medium",
+            "type": "missing_perspective",
+            "affects": "Currency and applicability of findings; policy recommendations for current platforms",
+            "recommendation": "Synthesizer should: (1) Organize evidence by study year and platform era; (2) Note which findings are based on pre-2020 platforms vs. current versions; (3) Flag whether effects may have changed post-algorithm modifications; (4) Specify which findings apply to 2024-2025 social media landscape"
+          },
+          {
+            "challenge": "'Vulnerable subgroups' qualifier is critical but underdeveloped. If social media primarily harms teens with pre-existing mental health conditions or trauma, the policy implication differs dramatically from 'harms all teens.' Research lacks quantification: what percentage of teens are 'vulnerable'? Is vulnerability pre-existing or caused by social media?",
+            "severity": "medium",
+            "type": "unstated_assumption",
+            "affects": "Policy implications; whether this is a population-level or targeted intervention problem",
+            "recommendation": "Synthesizer should: (1) Define and quantify 'vulnerable subgroups' (what percentage of teen population?); (2) Examine whether vulnerability is pre-existing or induced by social media; (3) Develop targeted interventions for vulnerable subgroups separately from general population recommendations"
+          },
+          {
+            "challenge": "Experimental evidence ('social media reduction experiments show improved mood') mentioned but not detailed. Missing: effect sizes, sample sizes, follow-up duration, self-selection bias of volunteers. A 5% mood improvement differs fundamentally from 50%, but research doesn't quantify.",
+            "severity": "low",
+            "type": "weak_evidence",
+            "affects": "Strength of causal evidence; magnitude of effects",
+            "recommendation": "Synthesizer should: (1) Locate and summarize existing social media reduction RCTs with effect sizes; (2) Conduct meta-analysis if multiple studies exist; (3) Report follow-up persistence of effects; (4) Examine sample sizes and representativeness"
+          }
+        ],
+        "strongest_counterargument": "The timing correlation between social media adoption and adolescent mental health decline is real but likely spurious. Between 2010-2020, Western societies experienced multiple simultaneous stressors: post-2008 recession economic precarity, climate anxiety intensification, educational competition increases, opioid epidemics, austerity-driven school funding cuts, and reduced outdoor play. These confounders are inadequately controlled. Moreover, the most rigorous evidence cuts against the main conclusion: twin studies suggest genetic vulnerability predicts both social media use and poor mental health (indicating selection bias, not causation); the National Academies of Sciences concluded social media has no population-level impact on adolescent mental health; and Meta's own corporate statement citing National Academies contradicts the 'seven lines of evidence' narrative. If vulnerability is primarily genetic selection, timing correlation is confounded, and the premier scientific body concludes no population-level impact, then the default position should be 'unclear' or 'minimal harm,' not 'harmful.' The research acknowledges these counterarguments exist but has not grappled with why they don't overturn the main conclusion.",
+        "overall_assessment": "This research is substantially weaker than its confident tone suggests. While it documents real correlations between social media use and mental health symptoms, it conflates correlation with causation, relies too heavily on a single contested source (WHR 2026), buries the most authoritative counterargument (National Academies), underspecifies dose-response relationships, and fails to adequately control for simultaneous socioeconomic confounders. The research would survive basic scrutiny but would not withstand rigorous challenge. If forced to assign confidence: the statement 'there is a correlation between social media use and mental health symptoms in some subgroups of teens' is robust (85% confidence). The statement 'social media causes mental health decline in teenagers' is much weaker (40% confidence given confounding, selection bias, and National Academies finding). A fair synthesis would acknowledge both the correlational evidence AND the unresolved causality question, present the genetic confounding explanation as a serious alternative, and specify that effects appear concentrated in vulnerable subgroups rather than population-wide."
+      },
+      "tool_calls": [],
+      "tokens": {
+        "input": 8883,
+        "output": 6931
+      }
+    },
+    "synthesis": {
+      "agent": "Synthesizer",
+      "role": "synthesizer",
+      "data": {
+        "summary": "Social media correlates with negative mental health outcomes in adolescents (depression, anxiety, sleep disruption), with stronger effects for girls and heavy users on engagement-optimized platforms. However, causality remains contested: confounding factors (economic stress, genetic vulnerability, academic pressure), selection effects (vulnerable teens seeking support online), and bidirectional relationships substantially complicate causal claims. Benefits are documented for isolated and marginalized youth. The evidence supports a heterogeneous conclusion: social media is harmful for specific populations in specific contexts, not uniformly harmful across all users.",
+        "key_findings": [
+          {
+            "finding": "Strong correlations exist between heavy social media use and depression, anxiety, and sleep disruption in adolescents across multiple independent longitudinal studies",
+            "category": "fact",
+            "confidence": "high",
+            "sources": [
+              "World Happiness Report 2026",
+              "Meta internal research (Haugen disclosures)",
+              "National Academies of Sciences reviews",
+              "Peer-reviewed longitudinal cohort studies"
+            ]
+          },
+          {
+            "finding": "Adolescent mental health (depression, anxiety, self-harm) declined in English-speaking countries beginning mid-2010s, coinciding with smartphone adoption and algorithmic feed personalization",
+            "category": "fact",
+            "confidence": "high",
+            "sources": [
+              "World Happiness Report 2026",
+              "UK/US/Canada/Australia epidemiological data"
+            ]
+          },
+          {
+            "finding": "Platform-specific harms are documented: Instagram correlates with body image dissatisfaction; TikTok with sleep disruption; all platforms enable cyberbullying",
+            "category": "fact",
+            "confidence": "high",
+            "sources": [
+              "Meta internal research",
+              "Peer-reviewed studies on platform design",
+              "Cyberbullying literature"
+            ]
+          },
+          {
+            "finding": "Causal direction remains incompletely resolved due to confounding variables (economic precarity, academic pressure, climate anxiety, reduced outdoor play), selection effects (vulnerable adolescents preferentially choosing social media), and bidirectional relationships",
+            "category": "fact",
+            "confidence": "high",
+            "sources": [
+              "Fact-checker analysis",
+              "Devil's Advocate critique",
+              "Twin study evidence",
+              "Methodological reviews"
+            ]
+          },
+          {
+            "finding": "Twin study evidence suggests genetic factors account for all observed associations between social media use and mental health outcomes in some samples, indicating potential selection bias",
+            "category": "fact",
+            "confidence": "moderate",
+            "sources": [
+              "Twin study analysis (verified in fact-check results)",
+              "Behavioral genetics literature"
+            ]
+          },
+          {
+            "finding": "Meta's internal research documents product harms (Instagram increases body dissatisfaction; algorithms amplify engagement over wellbeing), but the company also cites National Academies findings claiming social media has no population-level impact on adolescent mental health",
+            "category": "fact",
+            "confidence": "high",
+            "sources": [
+              "Meta internal documents (Haugen disclosures)",
+              "National Academies of Sciences",
+              "Corporate litigation records"
+            ]
+          },
+          {
+            "finding": "Social media provides documented benefits for isolated youth, neurodivergent adolescents, LGBTQ+ teens, and those in marginalized communities through connection, peer support, and identity affirmation",
+            "category": "fact",
+            "confidence": "moderate",
+            "sources": [
+              "Qualitative research with vulnerable populations",
+              "Mental health resource access studies",
+              "Community-based research on LGBTQ+ and neurodivergent youth"
+            ]
+          },
+          {
+            "finding": "Selection bias and causality are plausibly bidirectional: social media likely causes some harms (particularly sleep, body image, cyberbullying), AND vulnerable adolescents likely preferentially select into heavy use, with both mechanisms contributing to observed associations",
+            "category": "analysis",
+            "confidence": "moderate",
+            "sources": [
+              "Fact-checker synthesis",
+              "Devil's Advocate challenge analysis",
+              "Methodological critique of experimental vs. observational designs"
+            ]
+          },
+          {
+            "finding": "The magnitude of social media's causal contribution to adolescent mental health decline\u2014as distinct from competing confounders\u2014remains unknown and is likely moderate rather than dominant",
+            "category": "analysis",
+            "confidence": "moderate",
+            "sources": [
+              "Ecological correlation analysis",
+              "Uncontrolled confounder assessment",
+              "Timing alignment critique"
+            ]
+          },
+          {
+            "finding": "Specific design features (algorithmic feeds, infinite scroll, engagement metrics, like counts) show stronger evidence for harm than social media broadly, suggesting targeted design interventions may be more effective than blanket restrictions",
+            "category": "analysis",
+            "confidence": "moderate",
+            "sources": [
+              "Meta internal research",
+              "Platform design literature",
+              "A/B testing and natural experiments"
+            ]
+          },
+          {
+            "finding": "Policy and research discourse disproportionately emphasizes harms while systematically neglecting documented benefits for marginalized and isolated youth, creating risk of harm through overly restrictive intervention",
+            "category": "opinion",
+            "confidence": "high",
+            "sources": [
+              "Research findings bias analysis",
+              "Benefit literature review",
+              "Policy critique from neurodivergent and LGBTQ+ advocates"
+            ]
+          },
+          {
+            "finding": "Expert disagreement on causality reflects genuine methodological limitations (inability to control all confounders, heterogeneous populations, publication bias, institutional incentives) rather than purely motivated reasoning",
+            "category": "analysis",
+            "confidence": "high",
+            "sources": [
+              "Fact-checker conflict analysis",
+              "Methodological assessment of research design",
+              "Institutional funding patterns"
+            ]
+          }
+        ],
+        "unresolved_questions": [
+          "What is the isolated causal effect size of social media on adolescent mental health, net of confounding variables (economic stress, genetic vulnerability, academic pressure, sleep disruption from other sources)?",
+          "Does social media's impact differ substantially by age within the adolescent range (13-year-olds vs. 18-year-olds), and if so, what are the mechanistic explanations?",
+          "Which specific design features (algorithmic ranking, infinite scroll, like counts, public performance dynamics) are necessary and sufficient for harm, and can they be modified without reducing benefits?",
+          "What is the prevalence of severe cyberbullying, sextortion, and exploitation on social platforms relative to alternative online spaces, and how does this risk compare to benefits of connection?",
+          "Can platform modifications (non-algorithmic feeds, hidden metrics, time limits, notification controls) reduce identified harms while preserving benefits for isolated and marginalized youth?",
+          "What are the mental health outcomes for adolescents who reduce or eliminate social media use, compared to matched controls who maintain use\u2014controlling for motivation to change and underlying vulnerability?",
+          "How do social media harms compare in magnitude to documented harms of social isolation, limited peer connection, and lack of creative outlets for vulnerable youth?"
+        ],
+        "challenges_addressed": 6,
+        "confidence_overall": 0.62
+      },
+      "tool_calls": [],
+      "tokens": {
+        "input": 10105,
+        "output": 5740
+      }
+    },
+    "evaluation": {
+      "agent": "Evaluator",
+      "role": "evaluator",
+      "data": {
+        "scores": {
+          "source_diversity": 0.72,
+          "claim_verification_rate": 0.58,
+          "bias_balance": 0.68,
+          "challenge_resolution": 0.75,
+          "source_quality": 0.71,
+          "internal_consistency": 0.81
+        },
+        "overall_score": 0.6835,
+        "grade": "C+",
+        "improvements": [
+          {
+            "area": "claim_verification_rate",
+            "issue": "World Happiness Report 2026 is the lynchpin for ~30% of the analysis, yet fact-checker admits inability to verify specific claims without accessing full report. Remaining ~40% of claims rely on secondary source summaries rather than primary evidence.",
+            "suggestion": "Require fact-checker to access primary sources (published journal articles, full WHR 2026 report, Meta internal documents where available) before claims are used as evidence. Replace unverified generic citations ('multiple longitudinal studies') with 3-5 named studies with authors, years, and effect sizes."
+          },
+          {
+            "area": "source_diversity",
+            "issue": "Industry/platform-defender perspective is present only through Haugen disclosures. Missing: substantive counterarguments from platform designers, economists arguing for network effects, or researchers publishing minimal-harm findings. Geographic diversity limited to English-speaking countries.",
+            "suggestion": "Add 2-3 sources explicitly defending current platform designs or arguing for minimal causal harm. Conduct targeted search in non-English-speaking regions (India, Brazil, Japan, Germany) to compare findings and test universality of claims."
+          },
+          {
+            "area": "bias_balance",
+            "issue": "Harms discussion (~2000 words) receives 5:1 word-count advantage over benefits discussion (~400 words). Both are valid, but asymmetry may inflate perceived strength of harms relative to benefits. Confidence ratings (HIGH for associations, MODERATE-TO-HIGH for confounders) create subtle linguistic hierarchy favoring harms interpretation.",
+            "suggestion": "Expand benefits section to 800-1000 words with same specificity as harms (named mechanisms, prevalence data, subpopulations). Consider presenting all confidence ratings using identical language structures to avoid implicit hierarchy."
+          },
+          {
+            "area": "challenge_resolution",
+            "issue": "Devil's Advocate raised industry perspective gap (why platforms continue designs if harms documented?). Final report acknowledges harms but does not substantively resolve industry counterarguments or engage incentive structures.",
+            "suggestion": "Add 400-500 word section explicitly addressing platform business models, network effects, and design trade-offs. Include direct quotes or paraphrases of platform representatives' defenses, not just Meta's harm research."
+          },
+          {
+            "area": "source_quality",
+            "issue": "Afterbabel.com cited as authoritative source for WHR internal disagreement but not independently verified as primary source. No systematic reviews or meta-analyses cited despite contested nature of claims. No named longitudinal studies with effect sizes provided.",
+            "suggestion": "Verify afterbabel.com provenance and credibility; cite primary Haidt publications instead if available. Search Cochrane, PROSPERO, and PubMed for systematic reviews on social media and adolescent mental health. Replace generic 'longitudinal studies show...' with 3-5 named examples: authors, publication year, sample size, effect size."
+          }
+        ],
+        "commendations": [
+          "Excellent Devil's Advocate integration: final report structurally incorporates skeptical perspective rather than dismissing it.",
+          "Honest uncertainty acknowledgment: research clearly delineates what is known vs. contested vs. unknown without false confidence.",
+          "Methodologically sophisticated confounding analysis: names economic stress, climate anxiety, sleep deprivation as plausible alternative explanations rather than assuming social media causality.",
+          "Effective bias-detection follow-through: responds to bias detector's warning about false dichotomy by rejecting monolithic 'social media harm' framing.",
+          "Platform-specific differentiation: avoids treating social media as monolithic; correctly notes TikTok \u2260 Instagram in outcomes.",
+          "Appropriate hedge on genetic confounding: acknowledges twin studies finding genetics account for 'all associations in some samples' without overgeneralizing."
+        ]
+      },
+      "tool_calls": [],
+      "tokens": {
+        "input": 11729,
+        "output": 5123
+      }
+    }
+  },
+  "evaluation": {
+    "source_diversity": 0.72,
+    "claim_verification_rate": 0.58,
+    "bias_balance": 0.68,
+    "challenge_resolution": 0.75,
+    "source_quality": 0.71,
+    "internal_consistency": 0.81
+  },
+  "overall_grade": "C+",
+  "total_tokens": {
+    "input": 100283,
+    "output": 30520
+  },
+  "duration_seconds": 326.149909
+}
