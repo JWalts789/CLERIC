@@ -42,7 +42,7 @@
     </p>
   </div>
 
-  <form class="search-form" onsubmit={handleSubmit}>
+  <form class="search-form" role="search" onsubmit={handleSubmit}>
     <div class="input-wrapper" class:focused={false}>
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8" />
@@ -53,6 +53,7 @@
         class="search-input"
         bind:value={query}
         placeholder="Enter a claim, question, or topic to research..."
+        aria-label="Research query"
         disabled={loading}
       />
       <button

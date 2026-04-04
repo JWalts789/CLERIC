@@ -225,3 +225,88 @@ code {
 .animate-pulse {
   animation: pulse 2s ease-in-out infinite;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---- Print Styles ---- */
+@media print {
+  /* Hide chrome: top bar, pipeline progress, tabs nav, export button, token usage */
+  .top-bar,
+  .pipeline-progress,
+  .result-tabs,
+  .export-menu,
+  .token-usage,
+  .back-btn,
+  .history-badge,
+  .loading-state,
+  .error-banner,
+  .query-label {
+    display: none !important;
+  }
+
+  /* Full-width result content on white background */
+  :root {
+    color-scheme: light;
+  }
+
+  body,
+  #app,
+  .app-layout,
+  .main-content,
+  .results-layout,
+  .results-section,
+  .result-content {
+    background: white !important;
+    color: black !important;
+  }
+
+  .results-layout {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .query-banner {
+    background: white !important;
+    border: none !important;
+    border-left: 4px solid #333 !important;
+    color: black !important;
+    margin-bottom: 1rem;
+  }
+
+  .query-text {
+    color: black !important;
+  }
+
+  .result-content {
+    min-height: 0 !important;
+  }
+
+  /* Remove all animations */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Card styling for print */
+  .card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  p, span, li, td, th, h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+  }
+
+  a {
+    color: #333 !important;
+    text-decoration: underline !important;
+  }
+}

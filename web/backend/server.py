@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -86,6 +86,8 @@ _CONTENT_TRUNCATE_LIMIT = 5000
 # ---------------------------------------------------------------------------
 class ResearchRequest(BaseModel):
     query: str
+    model: str | None = None
+    max_search_results: int | None = None
 
 
 class ResearchResponse(BaseModel):
@@ -171,12 +173,16 @@ def _generate_mermaid_diagrams(result: PipelineResult) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 # Pipeline runner (executed in a background thread)
 # ---------------------------------------------------------------------------
-def _run_pipeline(job_id: str, query: str) -> None:
+def _run_pipeline(job_id: str, query: str, model: str | None = None, max_search_results: int | None = None) -> None:
     """Execute the research pipeline, emitting events as stages progress."""
     jobs[job_id]["status"] = "running"
 
     try:
         config = Config.from_env(dotenv_path=_PROJECT_ROOT / ".env")
+        if model:
+            config.model = model
+        if max_search_results:
+            config.max_search_results = max_search_results
         pipeline = ResearchPipeline(config)
 
         # Wire up callbacks ------------------------------------------------
@@ -249,6 +255,17 @@ async def health_check() -> HealthResponse:
     return HealthResponse(status="ok", version="0.1.0")
 
 
+@app.get("/api/settings/models")
+async def get_models():
+    return {
+        "models": [
+            {"id": "claude-haiku-4-5-20251001", "name": "Haiku 4.5", "cost_per_query": "~$0.15-0.25", "speed": "Fast"},
+            {"id": "claude-sonnet-4-6", "name": "Sonnet 4.6", "cost_per_query": "~$0.40-0.80", "speed": "Medium"},
+            {"id": "claude-opus-4-6", "name": "Opus 4.6", "cost_per_query": "~$2.00-5.00", "speed": "Slow"},
+        ]
+    }
+
+
 @app.post("/api/research", response_model=ResearchResponse)
 async def start_research(request: ResearchRequest) -> ResearchResponse:
     """Start a new research job.
@@ -269,6 +286,7 @@ async def start_research(request: ResearchRequest) -> ResearchResponse:
     thread = threading.Thread(
         target=_run_pipeline,
         args=(job_id, request.query),
+        kwargs={"model": request.model, "max_search_results": request.max_search_results},
         name=f"pipeline-{job_id[:8]}",
         daemon=True,
     )
@@ -324,6 +342,122 @@ async def delete_history_result(result_id: str) -> JSONResponse:
     """Delete a stored result."""
     deleted = result_store.delete_result(result_id)
     return JSONResponse({"deleted": deleted})
+
+
+# ---------------------------------------------------------------------------
+# Export endpoints
+# ---------------------------------------------------------------------------
+def _build_markdown_report(row: dict) -> str:
+    """Build a clean markdown report from a stored result dict."""
+    result = row.get("result") or {}
+    lines: list[str] = []
+
+    lines.append("# C.L.E.R.I.C. Research Report")
+    lines.append("")
+    lines.append(f"**Query:** {row.get('query', 'N/A')}")
+    lines.append(f"**Date:** {row.get('created_at', 'N/A')}")
+    lines.append(f"**Overall Grade:** {row.get('overall_grade', 'N/A')}")
+    duration = row.get("duration_seconds")
+    if duration:
+        lines.append(f"**Duration:** {duration:.1f}s")
+    tokens = result.get("total_tokens", {})
+    if tokens:
+        lines.append(
+            f"**Tokens Used:** {tokens.get('input', 0)} in / "
+            f"{tokens.get('output', 0)} out"
+        )
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    # Stage contents
+    stage_labels = {
+        "bias_detection": "Bias Detection",
+        "research": "Research",
+        "fact_checking": "Fact Checking",
+        "devils_advocate": "Devil's Advocate",
+        "synthesis": "Synthesis",
+        "evaluation": "Evaluation",
+    }
+
+    stages = result.get("stages", {})
+    for key, label in stage_labels.items():
+        stage = stages.get(key)
+        if not stage:
+            continue
+        lines.append(f"## {label}")
+        lines.append("")
+        content = stage.get("content", "")
+        if content:
+            lines.append(content)
+            lines.append("")
+
+        data = stage.get("data", {})
+        if key == "evaluation" and isinstance(data, dict):
+            scores = data.get("scores", data.get("dimensions", []))
+            if isinstance(scores, list):
+                for score_item in scores:
+                    name = score_item.get(
+                        "name", score_item.get("dimension", "")
+                    )
+                    val = score_item.get(
+                        "score", score_item.get("value", "")
+                    )
+                    if name:
+                        lines.append(f"- **{name}:** {val}")
+                lines.append("")
+
+        lines.append("---")
+        lines.append("")
+
+    # Mermaid diagrams
+    mermaid = row.get("mermaid_diagrams", {})
+    if mermaid:
+        lines.append("## Diagrams")
+        lines.append("")
+        for name, mermaid_content in mermaid.items():
+            lines.append(f"### {name}")
+            lines.append("")
+            lines.append("```mermaid")
+            lines.append(mermaid_content)
+            lines.append("```")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
+@app.get("/api/export/{result_id}/markdown")
+async def export_markdown(result_id: str) -> PlainTextResponse:
+    """Export a research result as a downloadable Markdown file."""
+    row = result_store.get_result(result_id)
+    if row is None:
+        return PlainTextResponse("Result not found", status_code=404)
+
+    md = _build_markdown_report(row)
+    return PlainTextResponse(
+        content=md,
+        headers={
+            "Content-Disposition": 'attachment; filename="cleric_report.md"'
+        },
+    )
+
+
+@app.get("/api/export/{result_id}/json")
+async def export_json(result_id: str) -> Response:
+    """Export a research result as a downloadable JSON file."""
+    row = result_store.get_result(result_id)
+    if row is None:
+        return JSONResponse({"error": "not found"}, status_code=404)
+
+    import json as _json
+
+    return Response(
+        content=_json.dumps(row, indent=2, default=str),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": 'attachment; filename="cleric_data.json"'
+        },
+    )
 
 
 # ---------------------------------------------------------------------------

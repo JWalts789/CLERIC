@@ -449,10 +449,18 @@ flowchart TD
     def _escape(self, text: str) -> str:
         """Escape characters that break Mermaid syntax."""
         return (
-            text.replace('"', "'")
+            text.replace("&", "&amp;")
+            .replace('"', "'")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
-            .replace("&", "&amp;")
+            .replace("#", "&num;")
+            .replace("(", "&lpar;")
+            .replace(")", "&rpar;")
+            .replace("[", "&lbrack;")
+            .replace("]", "&rbrack;")
+            .replace("{", "&lbrace;")
+            .replace("}", "&rbrace;")
+            .replace("|", "&vert;")
             .replace("\n", " ")
         )
 

@@ -16,7 +16,7 @@
   }
 </script>
 
-<div class="pipeline-progress">
+<div class="pipeline-progress" aria-label={activeStage ? `Pipeline running: ${STAGES.find(s => s.key === activeStage)?.label ?? activeStage}` : 'Analysis pipeline'}>
   <h3 class="progress-title">Analysis Pipeline</h3>
   <div class="stages">
     {#each STAGES as stage, i}

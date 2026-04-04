@@ -108,7 +108,7 @@
   <div class="diagram-container card">
     <div class="diagram-toolbar">
       <span class="diagram-name">{formatTabName(activeTab)}</span>
-      <button class="copy-btn" onclick={copySource}>
+      <button class="copy-btn" onclick={copySource} aria-label="Copy diagram source">
         {#if copied}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M5 13l4 4L19 7" />

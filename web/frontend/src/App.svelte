@@ -2,6 +2,7 @@
   import { startResearch, connectWebSocket, fetchResult, fetchHistory, type HistoryItem } from './lib/api';
   import { STAGES, type StageName, type StageStatus, type PipelineResult, type WSEvent } from './lib/types';
   import QueryInput from './lib/QueryInput.svelte';
+  import SettingsPanel from './lib/SettingsPanel.svelte';
   import PipelineProgress from './lib/PipelineProgress.svelte';
   import BiasAnalysis from './lib/BiasAnalysis.svelte';
   import SourceCards from './lib/SourceCards.svelte';
@@ -12,6 +13,7 @@
   import MermaidDiagram from './lib/MermaidDiagram.svelte';
   import TokenUsage from './lib/TokenUsage.svelte';
   import QueryHistory from './lib/QueryHistory.svelte';
+  import ExportMenu from './lib/ExportMenu.svelte';
 
   // App state
   type View = 'input' | 'results';
@@ -31,9 +33,23 @@
   // Final results
   let pipelineResult = $state<PipelineResult | null>(null);
   let mermaidDiagrams = $state<Record<string, string>>({});
+  let jobId = $state<string | null>(null);
 
   // History count for top-bar badge
   let historyCount = $state(0);
+
+  // Settings
+  let settingsOpen = $state(false);
+
+  function loadSavedSettings(): { model: string; maxResults: number } {
+    try {
+      const raw = localStorage.getItem('cleric-settings');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return { model: 'claude-sonnet-4-6', maxResults: 5 };
+  }
+
+  let currentSettings = $state(loadSavedSettings());
 
   // Active results tab
   type ResultTab = 'bias' | 'sources' | 'facts' | 'challenges' | 'synthesis' | 'evaluation' | 'diagrams';
@@ -49,6 +65,7 @@
     activeStage = null;
     pipelineResult = null;
     mermaidDiagrams = {};
+    jobId = null;
     errorMsg = '';
     activeResultTab = 'bias';
   }
@@ -65,8 +82,9 @@
     }
 
     try {
-      const jobId = await startResearch(q);
-      ws = connectWebSocket(jobId, handleEvent, handleClose, handleWsError);
+      const id = await startResearch(q, currentSettings);
+      jobId = id;
+      ws = connectWebSocket(id, handleEvent, handleClose, handleWsError);
     } catch (e: any) {
       errorMsg = e.message || 'Failed to start research. Is the backend running?';
       loading = false;
@@ -147,6 +165,7 @@
       loading = true;
       resetState();
       const full = await fetchResult(item.id);
+      jobId = item.id;
       query = full.query;
       view = 'results';
 
@@ -215,8 +234,14 @@
         {#if historyCount > 0}
           <span class="history-badge badge badge-info">{historyCount} past</span>
         {/if}
+        <button class="settings-btn" onclick={() => settingsOpen = true} aria-label="Open settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
         {#if view === 'results'}
-          <button class="back-btn" onclick={goBack}>
+          <button class="back-btn" onclick={goBack} aria-label="Go back to search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
@@ -235,15 +260,24 @@
         <QueryHistory onselect={handleHistorySelect} />
       </div>
     {:else}
-      <div class="results-layout">
+      <div class="results-layout" aria-busy={loading}>
         <!-- Query display -->
         <div class="query-banner">
-          <span class="query-label">Researching:</span>
-          <h2 class="query-text">{query}</h2>
+          <div class="query-banner-top">
+            <div>
+              <span class="query-label">Researching:</span>
+              <h2 class="query-text">{query}</h2>
+            </div>
+            {#if pipelineResult && jobId}
+              <ExportMenu {jobId} />
+            {/if}
+          </div>
         </div>
 
         <!-- Pipeline Progress -->
-        <PipelineProgress {stageStatuses} {stageTokens} {activeStage} />
+        <div aria-live="polite">
+          <PipelineProgress {stageStatuses} {stageTokens} {activeStage} />
+        </div>
 
         <!-- Error -->
         {#if errorMsg}
@@ -269,7 +303,7 @@
         <!-- Results Tabs -->
         {#if Object.values(stageStatuses).some(s => s === 'complete')}
           <div class="results-section">
-            <nav class="result-tabs">
+            <div class="result-tabs" role="tablist">
               {#each resultTabs as tab}
                 {@const available = isTabAvailable(tab)}
                 <button
@@ -277,6 +311,8 @@
                   class:active={activeResultTab === tab.key}
                   class:disabled={!available}
                   disabled={!available}
+                  role="tab"
+                  aria-selected={activeResultTab === tab.key}
                   onclick={() => activeResultTab = tab.key}
                 >
                   <span class="tab-icon">{tab.icon}</span>
@@ -286,9 +322,9 @@
                   {/if}
                 </button>
               {/each}
-            </nav>
+            </div>
 
-            <div class="result-content">
+            <div class="result-content" role="tabpanel">
               {#if activeResultTab === 'bias' && stageData.bias_detection}
                 <BiasAnalysis data={stageData.bias_detection} />
               {:else if activeResultTab === 'sources' && stageData.research}
@@ -324,7 +360,32 @@
   </main>
 </div>
 
+<SettingsPanel
+  open={settingsOpen}
+  onclose={() => settingsOpen = false}
+  onsave={(settings) => currentSettings = settings}
+/>
+
 <style>
+  .settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .settings-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   .app-layout {
     min-height: 100vh;
     display: flex;
@@ -450,6 +511,13 @@
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-md);
     border-left: 4px solid var(--accent);
+  }
+
+  .query-banner-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
   }
 
   .query-label {

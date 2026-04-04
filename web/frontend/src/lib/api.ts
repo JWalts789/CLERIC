@@ -11,11 +11,18 @@ const WS_BASE = import.meta.env.VITE_WS_URL || `ws://${window.location.host}`;
  * Start a research pipeline by submitting a query.
  * Returns the job ID for WebSocket tracking.
  */
-export async function startResearch(query: string): Promise<string> {
+export async function startResearch(
+  query: string,
+  settings?: { model?: string; maxResults?: number },
+): Promise<string> {
+  const body: Record<string, any> = { query };
+  if (settings?.model) body.model = settings.model;
+  if (settings?.maxResults) body.max_search_results = settings.maxResults;
+
   const response = await fetch(`${API_BASE}/api/research`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -123,4 +130,42 @@ export async function deleteResult(id: string): Promise<{ deleted: boolean }> {
   const response = await fetch(`${API_BASE}/api/history/${id}`, { method: 'DELETE' });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
+}
+
+// ============================================================
+// Export API
+// ============================================================
+
+/**
+ * Download a Markdown export of a result.
+ */
+export async function exportMarkdown(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE}/api/export/${id}/markdown`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cleric_report.md';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Download a JSON export of a result.
+ */
+export async function exportJson(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE}/api/export/${id}/json`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cleric_data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
