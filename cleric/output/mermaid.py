@@ -144,7 +144,12 @@ flowchart TD
         # Build bias nodes
         bias_nodes = ""
         for i, bias in enumerate(detected[:6]):
-            label = self._escape(str(bias)[:60])
+            if isinstance(bias, dict):
+                bias_type = self._escape(str(bias.get("type", ""))[:30])
+                quote = self._escape(str(bias.get("quote", ""))[:30])
+                label = f"{bias_type}<br/><small>'{quote}'</small>"
+            else:
+                label = self._escape(str(bias)[:60])
             bias_nodes += f'        B{i}["{label}"]\n'
 
         # Build neutral query nodes
@@ -341,24 +346,30 @@ flowchart TD
         grade = eval_stage.data.get("grade", "?")
         improvements = eval_stage.data.get("improvements", [])
 
-        # Build score bars using quadrant chart
+        # Build score bars
         score_rows = ""
         for metric, score in scores.items():
             if isinstance(score, (int, float)):
+                node_id = metric.upper()
                 label = metric.replace("_", " ").title()
                 bar_fill = int(score * 10)
                 bar = "█" * bar_fill + "░" * (10 - bar_fill)
-                score_rows += f'    {label.upper()}["{label}<br/>{bar} {score:.0%}"]\n'
+                score_rows += f'    {node_id}["{label}<br/>{bar} {score:.0%}"]\n'
                 if score >= 0.8:
-                    score_rows += f"    style {label.upper()} fill:#38a169,color:#fff\n"
+                    score_rows += f"    style {node_id} fill:#38a169,color:#fff\n"
                 elif score >= 0.6:
-                    score_rows += f"    style {label.upper()} fill:#d69e2e,color:#fff\n"
+                    score_rows += f"    style {node_id} fill:#d69e2e,color:#fff\n"
                 else:
-                    score_rows += f"    style {label.upper()} fill:#e53e3e,color:#fff\n"
+                    score_rows += f"    style {node_id} fill:#e53e3e,color:#fff\n"
 
         improvement_nodes = ""
         for i, imp in enumerate(improvements[:5]):
-            label = self._escape(str(imp)[:70])
+            if isinstance(imp, dict):
+                area = imp.get("area", "").replace("_", " ").title()
+                issue = self._escape(str(imp.get("issue", ""))[:60])
+                label = f"{area}: {issue}"
+            else:
+                label = self._escape(str(imp)[:70])
             improvement_nodes += f'    I{i}["{label}"]\n'
 
         overall = scores.get("overall_score", 0)

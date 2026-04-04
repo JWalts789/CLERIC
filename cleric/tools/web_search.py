@@ -46,9 +46,19 @@ def search_web(query: str, max_results: int = 5) -> str:
         Formatted string with numbered results containing title, URL, and snippet.
         Returns an error message string if the search fails.
     """
+    # Domains excluded from research results for credibility reasons
+    BLOCKED_DOMAINS = ["wikipedia.org", "en.wikipedia.org", "en.m.wikipedia.org"]
+
     try:
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=max_results))
+            # Request extra results to compensate for filtered ones
+            results = list(ddgs.text(query, max_results=max_results + 5))
+
+        # Filter out blocked domains
+        results = [
+            r for r in results
+            if not any(domain in r.get("href", "") for domain in BLOCKED_DOMAINS)
+        ][:max_results]
 
         if not results:
             return f"No results found for: {query}"

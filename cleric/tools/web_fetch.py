@@ -58,6 +58,9 @@ def fetch_page(url: str, max_length: int = 2000) -> str:
     Returns:
         Extracted text content, or an error message string on failure.
     """
+    if "wikipedia.org" in url.lower():
+        return "Wikipedia is blocked as a source. Use primary sources (academic papers, government reports, established journalism) instead."
+
     try:
         response = httpx.get(
             url,

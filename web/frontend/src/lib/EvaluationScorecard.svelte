@@ -95,7 +95,15 @@
         <h3>Improvement Recommendations</h3>
         <ul>
           {#each recommendations as rec}
-            <li>{typeof rec === 'string' ? rec : rec.text || rec.recommendation || JSON.stringify(rec)}</li>
+            <li>
+              {#if typeof rec === 'string'}
+                {rec}
+              {:else}
+                <strong>{rec.area?.replaceAll('_', ' ').toUpperCase() ?? ''}</strong>
+                {#if rec.issue}: {rec.issue}{/if}
+                {#if rec.suggestion}<br/><em>Suggestion: {rec.suggestion}</em>{/if}
+              {/if}
+            </li>
           {/each}
         </ul>
       </div>
