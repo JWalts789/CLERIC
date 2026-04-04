@@ -1,30 +1,89 @@
 ![CI](https://github.com/JWalts789/CLERIC/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
+![Tests](https://img.shields.io/badge/tests-172%20passing-brightgreen)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+<div align="center">
 
 # C.L.E.R.I.C.
 
 **Cross-Lateral Evidence Review for Informational Clarity**
 
-C.L.E.R.I.C. decomposes research into specialized agent roles that check each other's work. Instead of trusting a single LLM response, it runs a six-stage pipeline: bias detection, multi-perspective research, independent fact-checking, adversarial challenge, balanced synthesis, and quantitative evaluation.
+*You asked a question. You deserve the truth.*
 
-Every claim is sourced. Every bias is flagged. Every weakness is challenged. The result is research you can audit.
+A multi-agent AI research system that decomposes questions into specialized roles — bias detection, multi-perspective research, independent fact-checking, adversarial challenge, balanced synthesis, and quantitative evaluation — so you get auditable answers, not opinions.
+
+[Quick Start](#quick-start) | [Web UI](#web-ui) | [Design Decisions](#design-decisions) | [Sample Output](docs/samples/)
+
+</div>
+
+---
+
+## Screenshots
+
+> **Add your own screenshots here.** Take these 3 screenshots and save them to `docs/screenshots/`:
+
+| Landing Page | Pipeline Running | Results + Score |
+|:---:|:---:|:---:|
+| ![Landing](docs/screenshots/landing.png) | ![Pipeline](docs/screenshots/pipeline.png) | ![Results](docs/screenshots/results.png) |
+| *Search input with query history and source reputation* | *Live pipeline progress with 6 agent stages* | *Evaluation scorecard with dimension scores* |
+
+---
+
+## Why This Exists
+
+When you ask a single LLM a question, you get one perspective with no accountability. It might be right. It might be hallucinating. You have no way to tell.
+
+| Single LLM | C.L.E.R.I.C. |
+|-------------|--------|
+| One perspective, one pass | Six specialized agents with distinct roles |
+| No bias detection | Query analyzed and neutralized before research |
+| No self-verification | Every claim independently fact-checked |
+| No adversarial review | Devil's Advocate challenges all findings |
+| No quality metrics | Quantitative evaluation on 6 dimensions |
+| No audit trail | Full source citations, Mermaid diagrams, tool call logs |
+| Answers from training data | Live web research with conflict-of-interest flagging |
+
+---
 
 ## Quick Start
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/JWalts789/cleric.git
-cd cleric
-
-# 2. Install dependencies
+# Clone and install
+git clone https://github.com/JWalts789/CLERIC.git
+cd CLERIC
 pip install -e .
 
-# 3. Add your API key
+# Add your API key
 cp .env.example .env
 # Edit .env and set ANTHROPIC_API_KEY
 
-# 4. Run a query
+# Run a query
 cleric "What are the health effects of intermittent fasting?"
 ```
+
+## Web UI
+
+The full web interface runs on Svelte 5 + FastAPI with live WebSocket streaming.
+
+**Terminal 1 — Backend:**
+```bash
+cd web/backend
+pip install -r requirements.txt
+python run.py          # or: python run.py --demo  (loads sample results)
+```
+
+**Terminal 2 — Frontend:**
+```bash
+cd web/frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). Bring your own API key via the settings panel, or use the server's `.env` key.
+
+---
 
 ## Architecture
 
@@ -32,95 +91,138 @@ cleric "What are the health effects of intermittent fasting?"
 User Query
     |
     v
-+-------------------+
-| 1. Bias Detector  |  Analyzes query for loaded language, assumptions,
-|    (no tools)     |  and predetermined conclusions. Produces neutral
-|                   |  reformulations and required perspectives.
-+-------------------+
+[1. Bias Detector]      Strips loaded language, produces neutral queries
     |
     v
-+-------------------+
-| 2. Researcher     |  Searches the web using neutral queries. Actively
-|    (web tools)    |  seeks opposing viewpoints. Gathers sources that
-|                   |  disagree with each other.
-+-------------------+
+[2. Researcher]          Web search + fetch with tool-use budget (8-12 calls)
     |
     v
-+-------------------+
-| 3. Fact Checker   |  Independently verifies EACH claim from the
-|    (web tools)    |  Researcher. Searches for counter-evidence.
-|                   |  Categories: VERIFIED / DISPUTED / UNVERIFIED / FALSE
-+-------------------+
+[3. Fact Checker]        Independent verification, searches for counter-evidence
     |
     v
-+-------------------+
-| 4. Devil's        |  Argues AGAINST the emerging consensus. Identifies
-|    Advocate       |  weak evidence, logical gaps, missing perspectives,
-|    (no tools)     |  and cherry-picking.
-+-------------------+
+[4. Devil's Advocate]    Adversarial critique — finds every weakness
     |
     v
-+-------------------+
-| 5. Synthesizer    |  Produces the final report using ONLY verified
-|    (no tools)     |  claims. Presents multiple viewpoints. Addresses
-|                   |  every challenge from the Devil's Advocate.
-+-------------------+
+[5. Synthesizer]         Balanced report from verified evidence only
     |
     v
-+-------------------+
-| 6. Evaluator      |  Scores the research on 6 dimensions (0.0-1.0).
-|    (no tools)     |  Assigns a letter grade. Identifies specific
-|                   |  areas for improvement.
-+-------------------+
+[6. Evaluator]           Scores on 6 dimensions, assigns letter grade
     |
     v
 Outputs: Report (.md) + Diagrams (.mermaid) + Raw Data (.json)
 ```
 
-## Why Not Just Ask an LLM?
+Each agent uses Claude's **tool-use protocol** for structured output — guaranteeing reliable JSON data extraction instead of hoping the model embeds it in prose.
 
-| Single LLM | C.L.E.R.I.C. |
-|-------------|--------|
-| One perspective, one pass | Six specialized agents with distinct roles |
-| No bias detection | Query analyzed for bias before research begins |
-| No self-verification | Every claim independently fact-checked |
-| No adversarial review | Devil's Advocate challenges all findings |
-| No quality metrics | Quantitative evaluation on 6 dimensions |
-| No audit trail | Full tool call logs, source citations, Mermaid diagrams |
-| Answers from training data | Answers from live web research with sources |
+---
 
-## Installation
+## Design Decisions
+
+### Why 6 agents instead of 1?
+
+A single LLM answering a question is like asking one person to research, fact-check, critique, and grade their own work. They'll confirm their first instinct. C.L.E.R.I.C. separates these into roles that **check each other**:
+
+- The Researcher gathers evidence, but the Fact Checker verifies it independently
+- The Devil's Advocate attacks what everyone else agreed on
+- The Synthesizer can only use verified claims
+- The Evaluator scores the whole process, not just the output
+
+This mirrors how real research institutions work — peer review, adversarial debate, editorial oversight.
+
+### Why structured output via tool-use instead of JSON-in-prose?
+
+Early versions asked agents to embed JSON blocks in their text responses. This worked ~70% of the time. Smaller models (Haiku) often skipped the JSON entirely, leaving downstream stages with no structured data.
+
+The fix: each agent has a `submit_results` virtual tool with a strict JSON schema. Claude's tool-use protocol **guarantees** structured output because the model is designed to call tools reliably. The prose analysis and structured data flow through the same conversation but are captured through different channels.
+
+This is the same architectural pattern used in production agent systems — it demonstrates understanding of the fundamental reliability problem in LLM outputs.
+
+### Why conflict-of-interest detection?
+
+A source's credibility depends on who produced it. Meta studying the effects of its own platform, an advocacy group funded by the industry it covers, a think tank with known political alignment — these aren't automatically wrong, but the reader needs to know about the conflict to judge for themselves.
+
+The Researcher flags every source with a conflict level (none/low/moderate/high) and explains the stake. Sources that go **against** their own interest (like Meta's leaked internal research showing harm) are noted as potentially more credible.
+
+### Why a source reputation system?
+
+Individual research runs are useful. But tracking which domains consistently produce verified vs. disputed claims across **all** runs creates a community knowledge asset. Over time, C.L.E.R.I.C. learns which sources to trust — not from opinion, but from empirical verification data.
+
+The reputation file (`data/source_reputation.json`) ships with the repo and improves with every query.
+
+### Why BYOK (Bring Your Own Key)?
+
+Open-source AI tools that require a server-side API key create a tension: the developer pays for usage, or the tool requires a hosted service. BYOK solves this — users bring their own Anthropic key, stored only in their browser's localStorage, sent per-request, never persisted on the server. Zero infrastructure cost, full functionality.
+
+---
+
+## Unbiased by Design
+
+C.L.E.R.I.C.'s core principle: **the system actively resists bias at every stage**.
+
+1. **Bias Detector** scores the query's bias (0-10), strips emotional language, identifies perspectives that must be represented — including ones the user's framing excluded
+2. **Researcher** uses neutralized queries and actively seeks opposing viewpoints
+3. **Fact Checker** searches for the *opposite* of each claim to find counter-evidence
+4. **Devil's Advocate** — "If you cannot find any problems, you are not trying hard enough"
+5. **Synthesizer** separates FACTS (verified), ANALYSIS (inferred), and OPINION (perspective-dependent)
+6. **Evaluator** scores bias balance as one of six dimensions — favoritism gets a low score
+
+---
+
+## Evaluation Dimensions
+
+| Dimension | Weight | What it measures |
+|-----------|--------|-----------------|
+| **Source Diversity** | 15% | Were multiple perspectives represented? |
+| **Claim Verification Rate** | 25% | What % of claims were independently verified? |
+| **Bias Balance** | 20% | Does the output favor one side unfairly? |
+| **Challenge Resolution** | 15% | Were the Devil's Advocate challenges addressed? |
+| **Source Quality** | 15% | Are sources credible and varied? |
+| **Internal Consistency** | 10% | Do the findings contradict themselves? |
+
+Grade scale: A (0.85+) through F (0.00-0.29). The evaluator is calibrated to score harshly — 0.8+ is genuinely impressive.
+
+---
+
+## Features
+
+- **6-agent pipeline** with structured output (Claude tool-use protocol)
+- **Live web UI** — Svelte 5 + FastAPI + WebSocket streaming
+- **Bias detection** with neutral query reformulation
+- **Conflict-of-interest flagging** on all sources
+- **Source reputation tracking** — domain credibility scores across runs
+- **Query history** — SQLite persistence with search
+- **Export** — Markdown, JSON, and Print-to-PDF
+- **Settings panel** — model selection (Haiku/Sonnet/Opus) with cost estimates
+- **BYOK** — bring your own Anthropic API key
+- **Demo mode** — browse sample results without an API key
+- **6 Mermaid diagrams** per research run
+- **172 tests, 93% coverage**, CI/CD pipeline
+- **Accessibility** — ARIA labels, keyboard navigation, reduced-motion support
+
+---
+
+## Sample Output
+
+See [docs/samples/](docs/samples/) for complete research outputs you can browse without running the tool.
+
+**Example: "Is social media harmful to teenagers' mental health?"**
+- Bias Score: 3/10 (mild binary framing detected)
+- 16 sources across multiple perspectives
+- 5 claims fact-checked (2 verified, 2 disputed, 1 unverified)
+- 10 adversarial challenges raised
+- Grade: C+ (evaluator flagged source diversity and verification gaps)
+- [Full report](docs/samples/social_media_mental_health/report.md) | [Raw data](docs/samples/social_media_mental_health/raw_data.json)
+
+---
+
+## CLI Usage
 
 ```bash
-git clone https://github.com/JWalts789/cleric.git
-cd cleric
-pip install -e .
-```
-
-Copy the environment template and add your API key:
-
-```bash
-cp .env.example .env
-# Edit .env and set ANTHROPIC_API_KEY
-```
-
-## Usage
-
-```bash
-# Basic research query
-cleric "What are the health effects of intermittent fasting?"
-
-# With JSON output
-cleric "Is nuclear energy safe?" --json
-
-# Skip diagram generation
-cleric "What caused the 2008 financial crisis?" --no-mermaid
-
-# Verbose mode (show all agent outputs)
-cleric "Are electric vehicles better for the environment?" --verbose
-
-# Use a specific model
-cleric "What is quantum computing?" --model claude-sonnet-4-6
+cleric "Your research question"              # Basic query
+cleric "Is nuclear energy safe?" --json       # JSON output
+cleric "..." --verbose                        # Show all agent outputs
+cleric "..." --model claude-sonnet-4-6        # Specific model
+cleric "..." --no-mermaid --no-report         # Skip file generation
 ```
 
 ### Python API
@@ -128,169 +230,60 @@ cleric "What is quantum computing?" --model claude-sonnet-4-6
 ```python
 from cleric.config import Config
 from cleric.orchestrator import ResearchPipeline
-from cleric.output.mermaid import MermaidGenerator
-from cleric.output.report import ReportGenerator
 
 config = Config.from_env()
 pipeline = ResearchPipeline(config)
-
 result = pipeline.run("What are the economic effects of universal basic income?")
 
-# Access structured data
 print(f"Grade: {result.overall_grade}")
 print(f"Bias Score: {result.stages['bias_detection'].data.get('bias_score')}")
-print(f"Duration: {result.duration_seconds:.1f}s")
-
-# Generate outputs
-mermaid = MermaidGenerator(config.output_dir)
-diagrams = mermaid.generate_all(result)
-
-reporter = ReportGenerator(config.output_dir)
-report_path = reporter.generate(result)
 ```
 
-## Web UI
-
-Run the web interface with two terminals:
-
-**Terminal 1 — Backend:**
-
-```bash
-cd web/backend
-pip install -r requirements.txt
-python run.py
-```
-
-**Terminal 2 — Frontend:**
-
-```bash
-cd web/frontend
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Unbiased by Design
-
-C.L.E.R.I.C.'s core principle is that **the system actively resists bias at every stage**:
-
-1. **Bias Detector** runs before any research. It scores the query's bias (0-10), strips loaded language, and identifies perspectives that must be represented — including perspectives the user's framing may have excluded.
-
-2. **Researcher** uses the neutralized queries, not the original. It's instructed to seek disagreement, not confirmation.
-
-3. **Fact Checker** operates independently from the Researcher. For each claim, it searches for the *opposite* assertion to see if counter-evidence exists.
-
-4. **Devil's Advocate** exists solely to challenge the emerging consensus. Its system prompt says: "If you cannot find any problems, you are not trying hard enough."
-
-5. **Synthesizer** separates FACTS (verified), ANALYSIS (inferred), and OPINION (perspective-dependent). It must address every challenge raised by the Devil's Advocate.
-
-6. **Evaluator** scores bias balance as one of six dimensions. A report that favors one side unfairly gets a low score.
-
-## Output Formats
-
-### Mermaid Diagrams
-
-Every research run generates six Mermaid diagrams:
-
-| Diagram | Shows |
-|---------|-------|
-| `pipeline_flow` | Full agent chain with metrics |
-| `bias_analysis` | Detected biases, neutral reformulations, required perspectives |
-| `source_map` | Sources organized by perspective |
-| `verification_status` | Fact-check results for each claim |
-| `evaluation_scorecard` | Scores on 6 dimensions with visual bars |
-| `agent_interaction` | Sequence diagram of agent communication |
-
-### Markdown Report
-
-A comprehensive research report with sections for each pipeline stage, including source citations, verification status, challenges addressed, and evaluation scores.
-
-### Raw JSON
-
-Complete structured data from all agents, including tool call logs and token usage.
-
-## Evaluation Dimensions
-
-The Evaluator scores research on six dimensions (each 0.0-1.0):
-
-| Dimension | What it measures |
-|-----------|-----------------|
-| **Source Diversity** | Were multiple perspectives represented? |
-| **Claim Verification Rate** | What % of claims were independently verified? |
-| **Bias Balance** | Does the output favor one side unfairly? |
-| **Challenge Resolution** | Were the Devil's Advocate challenges addressed? |
-| **Source Quality** | Are sources credible and varied? |
-| **Internal Consistency** | Do the findings contradict themselves? |
-
-Overall grade: weighted average mapped to A-F scale. A score of 0.8+ is genuinely impressive research.
-
-## Memory System
-
-CLERIC maintains a persistent JSON-based memory store. When you research a topic, key findings are stored with confidence scores. Future research on related topics can build on prior work instead of starting from scratch.
-
-```
-memory_store/
-  quantum_computing.json    # Findings from prior research
-  climate_policy.json       # Each topic gets its own file
-```
+---
 
 ## Project Structure
 
 ```
 cleric/
-  __init__.py
-  config.py              # Environment-based configuration
-  cli.py                 # Rich terminal interface
-  orchestrator.py        # Pipeline that chains all agents
-  agents/
-    __init__.py
-    base.py              # BaseAgent with tool-use loop
-    bias_detector.py     # Stage 1: Query bias analysis
-    researcher.py        # Stage 2: Multi-perspective research
-    fact_checker.py      # Stage 3: Independent verification
-    devils_advocate.py   # Stage 4: Adversarial challenge
-    synthesizer.py       # Stage 5: Balanced synthesis
-    evaluator.py         # Stage 6: Quantitative scoring
-  tools/
-    __init__.py
-    registry.py          # Tool registry for Claude API
-    web_search.py        # DuckDuckGo search
-    web_fetch.py         # Page fetch + text extraction
-    file_io.py           # File read/write
-  memory/
-    __init__.py
-    store.py             # Persistent JSON memory store
-  output/
-    __init__.py
-    mermaid.py           # Mermaid diagram generator
-    report.py            # Markdown report generator
-tests/
-  test_config.py
-  test_tools.py
-  test_memory.py
-  test_agents.py
-  test_orchestrator.py
-  test_mermaid.py
+  agents/              # 6 specialized agents + base class
+  tools/               # Web search, page fetch, file I/O, tool registry
+  memory/              # Persistent JSON memory store
+  output/              # Mermaid diagram + Markdown report generators
+  reputation.py        # Community source credibility tracking
+  orchestrator.py      # Pipeline that chains all agents
+  cli.py               # Rich terminal interface
+  config.py            # Environment-based configuration
+web/
+  backend/             # FastAPI + WebSocket server, SQLite store
+  frontend/            # Svelte 5 + TypeScript UI
+tests/                 # 172 tests, 93% coverage
+docs/
+  samples/             # Curated research output samples
 ```
 
 ## Configuration
 
-| Environment Variable | Default | Description |
-|---------------------|---------|-------------|
+| Variable | Default | Description |
+|----------|---------|-------------|
 | `ANTHROPIC_API_KEY` | (required) | Your Anthropic API key |
-| `CLERIC_MODEL` | `claude-sonnet-4-6` | Claude model to use |
-| `CLERIC_MAX_SEARCH_RESULTS` | `10` | Max results per web search |
-| `CLERIC_MEMORY_DIR` | `./memory_store` | Memory persistence directory |
-| `CLERIC_OUTPUT_DIR` | `./output` | Output file directory |
+| `CLERIC_MODEL` | `claude-sonnet-4-6` | Claude model |
+| `CLERIC_MAX_SEARCH_RESULTS` | `10` | Max results per search |
 | `CLERIC_MAX_TOKENS` | `4096` | Max tokens per agent call |
 
 ## Running Tests
 
 ```bash
-pytest tests/ -v --cov=cleric
+pytest tests/ -v --cov=cleric    # 172 tests, 93% coverage
 ```
 
 ## License
 
 MIT
+
+---
+
+<div align="center">
+
+**Built by [JWalts789](https://github.com/JWalts789)** | Powered by [Claude](https://anthropic.com) | [View Sample Output](docs/samples/)
+
+</div>
