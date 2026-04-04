@@ -13,6 +13,7 @@
   import MermaidDiagram from './lib/MermaidDiagram.svelte';
   import TokenUsage from './lib/TokenUsage.svelte';
   import QueryHistory from './lib/QueryHistory.svelte';
+  import SourceReputation from './lib/SourceReputation.svelte';
   import ExportMenu from './lib/ExportMenu.svelte';
 
   // App state
@@ -41,7 +42,7 @@
   // Settings
   let settingsOpen = $state(false);
 
-  function loadSavedSettings(): { model: string; maxResults: number } {
+  function loadSavedSettings(): { model: string; maxResults: number; apiKey?: string } {
     try {
       const raw = localStorage.getItem('cleric-settings');
       if (raw) return JSON.parse(raw);
@@ -271,6 +272,9 @@
       <div class="history-section">
         <QueryHistory onselect={handleHistorySelect} />
       </div>
+      <div class="history-section">
+        <SourceReputation />
+      </div>
     {:else}
       <div class="results-layout" aria-busy={loading}>
         <!-- Query display -->
@@ -375,7 +379,7 @@
 <SettingsPanel
   open={settingsOpen}
   onclose={() => settingsOpen = false}
-  onsave={(settings) => currentSettings = settings}
+  onsave={(settings: any) => currentSettings = settings}
 />
 
 <style>

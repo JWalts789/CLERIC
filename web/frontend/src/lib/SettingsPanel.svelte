@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { validateApiKey } from './api';
+
   const STORAGE_KEY = 'cleric-settings';
 
   interface Model {
@@ -11,6 +13,7 @@
   interface Settings {
     model: string;
     maxResults: number;
+    apiKey?: string;
   }
 
   interface Props {
@@ -37,6 +40,9 @@
 
   let selectedModel = $state(loadSettings().model);
   let maxResults = $state(loadSettings().maxResults);
+  let apiKey = $state(loadSettings().apiKey || '');
+  let keyValidation = $state<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  let keyError = $state('');
 
   // Reset form values when panel opens
   $effect(() => {
@@ -44,11 +50,43 @@
       const saved = loadSettings();
       selectedModel = saved.model;
       maxResults = saved.maxResults;
+      apiKey = saved.apiKey || '';
+      keyValidation = saved.apiKey ? 'valid' : 'idle';
+      keyError = '';
     }
   });
 
+
+  async function handleValidateKey() {
+    if (!apiKey.trim()) return;
+    keyValidation = 'checking';
+    keyError = '';
+    try {
+      const result = await validateApiKey(apiKey.trim());
+      if (result.valid) {
+        keyValidation = 'valid';
+      } else {
+        keyValidation = 'invalid';
+        keyError = result.error || 'Invalid API key';
+      }
+    } catch (e: any) {
+      keyValidation = 'invalid';
+      keyError = e.message || 'Validation failed';
+    }
+  }
+
+  function handleClearKey() {
+    apiKey = '';
+    keyValidation = 'idle';
+    keyError = '';
+  }
+
   function handleSave() {
-    const settings: Settings = { model: selectedModel, maxResults: Number(maxResults) };
+    const settings: Settings = {
+      model: selectedModel,
+      maxResults: Number(maxResults),
+      ...(apiKey.trim() ? { apiKey: apiKey.trim() } : {}),
+    };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     onsave(settings);
     onclose();
@@ -110,6 +148,46 @@
               </button>
             {/each}
           </div>
+        </div>
+
+        <!-- API Key (BYOK) -->
+        <div class="setting-group">
+          <label class="setting-label" for="api-key-input">Anthropic API Key</label>
+          <p class="setting-description">
+            Bring your own key. It is stored locally in your browser and sent per-request. We never store it on our servers.
+          </p>
+          <div class="api-key-row">
+            <input
+              id="api-key-input"
+              type="password"
+              placeholder="sk-ant-..."
+              bind:value={apiKey}
+              class="api-key-input"
+            />
+            {#if apiKey.trim()}
+              <button
+                class="btn-validate"
+                onclick={() => handleValidateKey()}
+                disabled={keyValidation === 'checking'}
+              >
+                {#if keyValidation === 'checking'}
+                  ...
+                {:else}
+                  Validate
+                {/if}
+              </button>
+              <button class="btn-clear-key" onclick={() => handleClearKey()} aria-label="Clear API key">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            {/if}
+          </div>
+          {#if keyValidation === 'valid'}
+            <span class="key-status key-valid">Valid key</span>
+          {:else if keyValidation === 'invalid'}
+            <span class="key-status key-invalid">Invalid: {keyError}</span>
+          {/if}
         </div>
 
         <!-- Max Search Results -->
@@ -238,6 +316,93 @@
     color: var(--text-dim);
     margin: 0;
     line-height: 1.4;
+  }
+
+  /* API Key */
+  .api-key-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0.25rem;
+  }
+
+  .api-key-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    outline: none;
+    transition: border-color var(--transition-fast);
+  }
+
+  .api-key-input::placeholder {
+    color: var(--text-dim);
+  }
+
+  .api-key-input:focus {
+    border-color: var(--accent);
+  }
+
+  .btn-validate {
+    padding: 8px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+  }
+
+  .btn-validate:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-validate:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-clear-key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .btn-clear-key:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .key-status {
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .key-valid {
+    color: #4ade80;
+  }
+
+  .key-invalid {
+    color: #f87171;
   }
 
   /* Model selection cards */

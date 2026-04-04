@@ -28,10 +28,12 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 from cleric.config import Config  # noqa: E402
 from cleric.orchestrator import PipelineResult, ResearchPipeline  # noqa: E402
 from cleric.output.mermaid import MermaidGenerator  # noqa: E402
+from cleric.reputation import SourceReputation  # noqa: E402
 
 from db import ResultStore  # noqa: E402
 
 result_store = ResultStore(str(_PROJECT_ROOT / "data" / "cleric.db"))
+source_reputation = SourceReputation(str(_PROJECT_ROOT / "data" / "source_reputation.json"))
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -88,6 +90,11 @@ class ResearchRequest(BaseModel):
     query: str
     model: str | None = None
     max_search_results: int | None = None
+    api_key: str | None = None
+
+
+class ValidateKeyRequest(BaseModel):
+    api_key: str
 
 
 class ResearchResponse(BaseModel):
@@ -172,12 +179,20 @@ def _generate_mermaid_diagrams(result: PipelineResult) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 # Pipeline runner (executed in a background thread)
 # ---------------------------------------------------------------------------
-def _run_pipeline(job_id: str, query: str, model: str | None = None, max_search_results: int | None = None) -> None:
+def _run_pipeline(
+    job_id: str,
+    query: str,
+    model: str | None = None,
+    max_search_results: int | None = None,
+    api_key: str | None = None,
+) -> None:
     """Execute the research pipeline, emitting events as stages progress."""
     jobs[job_id]["status"] = "running"
 
     try:
         config = Config.from_env(dotenv_path=_PROJECT_ROOT / ".env")
+        if api_key:
+            config.anthropic_api_key = api_key
         if model:
             config.model = model
         if max_search_results:
@@ -224,6 +239,11 @@ def _run_pipeline(job_id: str, query: str, model: str | None = None, max_search_
 
         result_store.save_result(job_id, query, result_dict, mermaid_diagrams)
 
+        try:
+            source_reputation.update_from_pipeline(result_dict)
+        except Exception:
+            logger.warning("Failed to update source reputation", exc_info=True)
+
         complete_event = {
             "type": "pipeline_complete",
             "result": result_dict,
@@ -265,6 +285,25 @@ async def get_models():
     }
 
 
+@app.post("/api/validate-key")
+async def validate_key(request: ValidateKeyRequest) -> JSONResponse:
+    """Validate an Anthropic API key with a minimal API call."""
+    from anthropic import Anthropic, AuthenticationError
+
+    try:
+        client = Anthropic(api_key=request.api_key)
+        client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=1,
+            messages=[{"role": "user", "content": "hi"}],
+        )
+        return JSONResponse({"valid": True})
+    except AuthenticationError:
+        return JSONResponse({"valid": False, "error": "Invalid API key"})
+    except Exception as e:
+        return JSONResponse({"valid": False, "error": str(e)})
+
+
 @app.post("/api/research", response_model=ResearchResponse)
 async def start_research(request: ResearchRequest) -> ResearchResponse:
     """Start a new research job.
@@ -285,7 +324,11 @@ async def start_research(request: ResearchRequest) -> ResearchResponse:
     thread = threading.Thread(
         target=_run_pipeline,
         args=(job_id, request.query),
-        kwargs={"model": request.model, "max_search_results": request.max_search_results},
+        kwargs={
+            "model": request.model,
+            "max_search_results": request.max_search_results,
+            "api_key": request.api_key,
+        },
         name=f"pipeline-{job_id[:8]}",
         daemon=True,
     )
@@ -341,6 +384,18 @@ async def delete_history_result(result_id: str) -> JSONResponse:
     """Delete a stored result."""
     deleted = result_store.delete_result(result_id)
     return JSONResponse({"deleted": deleted})
+
+
+# ---------------------------------------------------------------------------
+# Reputation endpoints
+# ---------------------------------------------------------------------------
+@app.get("/api/reputation")
+async def get_reputation() -> JSONResponse:
+    """Return source reputation summary and top domains."""
+    return JSONResponse({
+        "summary": source_reputation.get_summary(),
+        "top_domains": source_reputation.get_top_domains(30),
+    })
 
 
 # ---------------------------------------------------------------------------

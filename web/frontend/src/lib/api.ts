@@ -13,11 +13,12 @@ const WS_BASE = import.meta.env.VITE_WS_URL || `ws://${window.location.host}`;
  */
 export async function startResearch(
   query: string,
-  settings?: { model?: string; maxResults?: number },
+  settings?: { model?: string; maxResults?: number; apiKey?: string },
 ): Promise<string> {
   const body: Record<string, any> = { query };
   if (settings?.model) body.model = settings.model;
   if (settings?.maxResults) body.max_search_results = settings.maxResults;
+  if (settings?.apiKey) body.api_key = settings.apiKey;
 
   const response = await fetch(`${API_BASE}/api/research`, {
     method: 'POST',
@@ -32,6 +33,23 @@ export async function startResearch(
 
   const data = await response.json();
   return data.job_id;
+}
+
+/**
+ * Validate an Anthropic API key against the backend.
+ */
+export async function validateApiKey(apiKey: string): Promise<{ valid: boolean; error?: string }> {
+  const response = await fetch(`${API_BASE}/api/validate-key`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ api_key: apiKey }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json();
 }
 
 /**
@@ -128,6 +146,41 @@ export async function fetchResult(id: string): Promise<FullHistoryResult> {
  */
 export async function deleteResult(id: string): Promise<{ deleted: boolean }> {
   const response = await fetch(`${API_BASE}/api/history/${id}`, { method: 'DELETE' });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+// ============================================================
+// Reputation API
+// ============================================================
+
+export interface ReputationDomain {
+  domain: string;
+  cited_count: number;
+  verified_claims: number;
+  disputed_claims: number;
+  false_claims: number;
+  unverified_claims: number;
+  credibility_score: number;
+}
+
+export interface ReputationSummary {
+  total_domains: number;
+  total_runs: number;
+  last_updated: string | null;
+  avg_credibility: number;
+}
+
+export interface ReputationResponse {
+  summary: ReputationSummary;
+  top_domains: ReputationDomain[];
+}
+
+/**
+ * Fetch source reputation data (domain credibility scores).
+ */
+export async function fetchReputation(): Promise<ReputationResponse> {
+  const response = await fetch(`${API_BASE}/api/reputation`);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }
