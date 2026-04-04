@@ -14,8 +14,9 @@
   /** Strip unicode bullet escapes and leading bullet chars from claim text */
   function cleanClaim(text: string): string {
     return text
-      .replace(/\\u2022\s?/gi, '')
-      .replace(/^[\u2022\u2023\u25E6\u2043\u2219•]\s*/g, '')
+      .replace(/\\?u20[0-9a-fA-F]{2}/g, '')   // \u20XX or u20XX escape sequences
+      .replace(/^[\u2022\u2023\u25E6\u2043\u2219\u2013\u2014•–—]\s*/g, '')  // actual bullet/dash chars
+      .replace(/\s{2,}/g, ' ')                  // collapse double spaces left behind
       .trim();
   }
   let perspectives = $derived([...new Set(sources.map(s => s.perspective).filter(Boolean))]);
