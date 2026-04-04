@@ -230,7 +230,12 @@
   <!-- Top Bar -->
   <header class="top-bar">
     <div class="top-bar-controls top-bar-left">
+      <span class="motto">
+        <span class="motto-line1">You asked a question.</span>
+        <span class="motto-line2">You deserve the truth.</span>
+      </span>
       {#if view === 'results'}
+        <span class="motto-divider"></span>
         <button class="back-btn" onclick={goBack} aria-label="Go back to search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -474,6 +479,43 @@
     font-weight: 500;
   }
 
+  .motto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    line-height: 1.3;
+  }
+
+  .motto-line1 {
+    font-size: 0.65rem;
+    color: rgba(148, 163, 184, 0.6);
+    font-style: italic;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+  }
+
+  .motto-line2 {
+    font-size: 0.7rem;
+    color: rgba(110, 231, 183, 0.7);
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: 0.03em;
+    text-shadow: 0 0 12px rgba(110, 231, 183, 0.2);
+  }
+
+  .motto-divider {
+    width: 1px;
+    height: 24px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(110, 231, 183, 0.25),
+      transparent
+    );
+    flex-shrink: 0;
+  }
+
   .back-btn {
     display: inline-flex;
     align-items: center;
@@ -712,6 +754,10 @@
 
     .brand-name {
       font-size: 1.1rem;
+    }
+
+    .motto, .motto-divider {
+      display: none;
     }
 
     .top-bar {
